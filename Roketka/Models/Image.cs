@@ -15,5 +15,5 @@ public partial class Image
 
     public DateTime? UpdatedAt { get; set; }
 
-    public virtual Product Product { get; set; } = null!;
+    public virtual Product? Product { get; set; } = null!;
 }

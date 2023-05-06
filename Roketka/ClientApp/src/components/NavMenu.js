@@ -1,23 +1,32 @@
-import React from 'react';
-import { Layout, Menu } from 'antd';
+﻿import React from 'react';
+import { Row, Col, Layout, Space, Button } from 'antd';
 
 export default function NavMenu() {
-    const navItems = ['1', '2', '3'].map((key) => ({
-        key,
-        label: `nav ${key}`,
-    }));
-
     return (
         <Layout.Header>
-            <div className="logo">
-                <a href="/">Roketka</a>
-            </div>
+            <Row style={{ width: '100%' }} justify={'space-between'}>
+                <Col>
+                    <div className="logo">Roketka</div>
+                </Col>
 
-            <Menu
-                theme="dark"
-                mode="horizontal"
-                items={navItems}
-            />
+                <Col>
+                    <Space>
+                        <a href="/" className="link-white">Головна</a>
+
+                        <a href="/catalog" className="link-white">Каталог</a>
+
+                        <a href="/about" className="link-white">Про нас</a>
+                    </Space>
+                </Col>
+
+                <Col>
+                    <Space>
+                        <Button>Зареєструватись</Button>
+
+                        <Button>Увійти</Button>
+                    </Space>
+                </Col>
+            </Row>
         </Layout.Header>
     )
 }

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { Layout } from 'antd';
+import Counter from './Counter';
 
 export default function Home() {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        fetch("api/products/GetProducts")
+        fetch("api/Products/GetProducts")
             .then(response => { return response.json() })
             .then(responseJson => {
                 setProducts(responseJson)
@@ -12,12 +14,14 @@ export default function Home() {
     }, []);
 
     return (
-        <div>
+        <Layout.Content className="content">
             {
                 products.map((item) => (
                     <p>{item.title}</p>
                     ))
             }
-        </div>
+
+            <Counter/>
+        </Layout.Content>
     );
 }

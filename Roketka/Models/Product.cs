@@ -17,19 +17,13 @@ public partial class Product
 
     public long SectionId { get; set; }
 
-    public long SellerId { get; set; }
-
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
 
-    public virtual ICollection<Characteristic> Characteristics { get; set; } = new List<Characteristic>();
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ICollection<Image> Images { get; set; } = new List<Image>();
 
-    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
-
-    public virtual Section Section { get; set; } = null!;
-
-    public virtual Seller Seller { get; set; } = null!;
+    public virtual Section? Section { get; set; } = null!;
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Roketka.Models;
 
-public partial class Review
+public partial class Comment
 {
     public long Id { get; set; }
 
@@ -17,7 +17,7 @@ public partial class Review
 
     public DateTime CreatedAt { get; set; }
 
-    public virtual Product Product { get; set; } = null!;
+    public virtual Product? Product { get; set; } = null!;
 
-    public virtual User User { get; set; } = null!;
+    public virtual User? User { get; set; } = null!;
 }

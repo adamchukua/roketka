@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Roketka.Models;
+using Roketka.Services.ProductsService;
 
 namespace Roketka.Controllers
 {
@@ -8,18 +11,63 @@ namespace Roketka.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly RoketkaContext _context;
+        private readonly IProductsService _productsService;
 
-        public ProductsController(RoketkaContext context)
+        public ProductsController(IProductsService productsService)
         {
-            _context = context;
+            _productsService = productsService;
         }
 
         [HttpGet("GetProducts")]
-        public IActionResult Get()
+        public async Task<ActionResult> Get()
         {
-            List<Product> products = _context.Products.ToList();
+            var products = await _productsService.Get();
             return Ok(products);
+        }
+
+        [HttpGet("GetProduct/{id}")]
+        public async Task<ActionResult<Product>> Get(long id)
+        {
+            var product = await _productsService.Get(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(product);
+        }
+
+        [Authorize]
+        [HttpPost("AddProduct")]
+        public async Task<ActionResult<Product>> Post(Product product)
+        {
+            await _productsService.Post(product);
+
+            return Ok(product);
+        }
+
+        [Authorize]
+        [HttpPut("UpdateProduct")]
+        public async Task<ActionResult<Product>> Put(Product product)
+        {
+            await _productsService.Put(product);
+
+            return Ok(product);
+        }
+
+        [Authorize]
+        [HttpDelete("DeleteProduct/{id}")]
+        public async Task<ActionResult<Product>> Delete(long id)
+        {
+            var product = await _productsService.Delete(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(product);
         }
     }
 }

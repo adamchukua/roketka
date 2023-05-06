@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Roketka.Models;
 
@@ -9,13 +11,10 @@ public partial class User
 
     public string Name { get; set; } = null!;
 
+    [EmailAddress]
     public string Email { get; set; } = null!;
-
-    public DateTime? EmailVerifiedAt { get; set; }
-
+    
     public string Password { get; set; } = null!;
-
-    public string? RememberToken { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -23,5 +22,5 @@ public partial class User
 
     public byte IsAdmin { get; set; }
 
-    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }

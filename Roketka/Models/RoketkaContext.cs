@@ -15,23 +15,13 @@ public partial class RoketkaContext : DbContext
     {
     }
 
-    public virtual DbSet<Characteristic> Characteristics { get; set; }
+    public virtual DbSet<Comment> Comments { get; set; }
 
     public virtual DbSet<Image> Images { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
 
-    public virtual DbSet<Review> Reviews { get; set; }
-
-    public virtual DbSet<ReviewNumber> ReviewNumbers { get; set; }
-
-    public virtual DbSet<ReviewsNumber> ReviewsNumbers { get; set; }
-
     public virtual DbSet<Section> Sections { get; set; }
-
-    public virtual DbSet<Seller> Sellers { get; set; }
-
-    public virtual DbSet<TopGood> TopGoods { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -43,32 +33,32 @@ public partial class RoketkaContext : DbContext
     {
         modelBuilder.UseCollation("Cyrillic_General_CI_AS");
 
-        modelBuilder.Entity<Characteristic>(entity =>
+        modelBuilder.Entity<Comment>(entity =>
         {
-            entity.ToTable("characteristics");
-
-            entity.HasIndex(e => new { e.ProductId, e.Title }, "IX_title_and_good_unique").IsUnique();
+            entity.ToTable("comments");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
-                .HasColumnType("datetime")
+                .HasColumnType("date")
                 .HasColumnName("created_at");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
-            entity.Property(e => e.Title)
-                .HasMaxLength(100)
+            entity.Property(e => e.Text)
+                .HasMaxLength(1000)
                 .IsUnicode(false)
-                .HasColumnName("title");
+                .HasColumnName("text");
             entity.Property(e => e.UpdatedAt)
-                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("date")
                 .HasColumnName("updated_at");
-            entity.Property(e => e.Value)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("value");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.Characteristics)
+            entity.HasOne(d => d.Product).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_characteristics_goods");
+                .HasConstraintName("FK_comments_products");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Comments)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_comments_users");
         });
 
         modelBuilder.Entity<Image>(entity =>
@@ -95,11 +85,9 @@ public partial class RoketkaContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_goods");
-
             entity.ToTable("products", tb => tb.HasTrigger("createdDateCheck"));
 
-            entity.HasIndex(e => e.Title, "IX_goods").IsUnique();
+            entity.HasIndex(e => e.Title, "IX_products").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
@@ -113,9 +101,6 @@ public partial class RoketkaContext : DbContext
                 .HasColumnName("price");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.SectionId).HasColumnName("section_id");
-            entity.Property(e => e.SellerId)
-                .HasDefaultValueSql("((1))")
-                .HasColumnName("seller_id");
             entity.Property(e => e.Title)
                 .HasMaxLength(200)
                 .IsUnicode(false)
@@ -126,68 +111,7 @@ public partial class RoketkaContext : DbContext
 
             entity.HasOne(d => d.Section).WithMany(p => p.Products)
                 .HasForeignKey(d => d.SectionId)
-                .HasConstraintName("FK_goods_sections");
-
-            entity.HasOne(d => d.Seller).WithMany(p => p.Products)
-                .HasForeignKey(d => d.SellerId)
-                .HasConstraintName("FK_goods_sellers");
-        });
-
-        modelBuilder.Entity<Review>(entity =>
-        {
-            entity.ToTable("reviews");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt)
-                .HasColumnType("date")
-                .HasColumnName("created_at");
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
-            entity.Property(e => e.Text)
-                .HasMaxLength(1000)
-                .IsUnicode(false)
-                .HasColumnName("text");
-            entity.Property(e => e.UpdatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("date")
-                .HasColumnName("updated_at");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.Reviews)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_reviews_goods");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Reviews)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK_reviews_users");
-        });
-
-        modelBuilder.Entity<ReviewNumber>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("Review Number");
-
-            entity.Property(e => e.ReviewsNumber).HasColumnName("reviews_number");
-            entity.Property(e => e.Title)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("title");
-        });
-
-        modelBuilder.Entity<ReviewsNumber>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("Reviews Number");
-
-            entity.Property(e => e.Date)
-                .HasColumnType("date")
-                .HasColumnName("date");
-            entity.Property(e => e.ReviewsNumber1).HasColumnName("reviews_number");
-            entity.Property(e => e.Title)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("title");
+                .HasConstraintName("FK_products_sections");
         });
 
         modelBuilder.Entity<Section>(entity =>
@@ -202,38 +126,11 @@ public partial class RoketkaContext : DbContext
                 .HasColumnName("title");
         });
 
-        modelBuilder.Entity<Seller>(entity =>
-        {
-            entity.ToTable("sellers");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Title)
-                .HasMaxLength(250)
-                .IsUnicode(false)
-                .HasColumnName("title");
-        });
-
-        modelBuilder.Entity<TopGood>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("top_goods");
-
-            entity.Property(e => e.Number).HasColumnName("number");
-            entity.Property(e => e.Price)
-                .HasColumnType("money")
-                .HasColumnName("price");
-            entity.Property(e => e.Title)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("title");
-        });
-
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__users__3213E83F948582F1");
 
-            entity.ToTable("users", tb => tb.HasTrigger("setUnverifiedEmail"));
+            entity.ToTable("users");
 
             entity.HasIndex(e => e.Email, "users_email_unique").IsUnique();
 
@@ -244,9 +141,6 @@ public partial class RoketkaContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(255)
                 .HasColumnName("email");
-            entity.Property(e => e.EmailVerifiedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("email_verified_at");
             entity.Property(e => e.IsAdmin).HasColumnName("is_admin");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
@@ -254,9 +148,6 @@ public partial class RoketkaContext : DbContext
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");
-            entity.Property(e => e.RememberToken)
-                .HasMaxLength(100)
-                .HasColumnName("remember_token");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
