@@ -8,7 +8,7 @@ export default function Layout(props) {
         <AntdLayout>
             <NavMenu />
 
-            <AntdLayout>
+            <AntdLayout className="content">
                 {props.children}
             </AntdLayout>
 

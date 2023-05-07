@@ -4,7 +4,7 @@ import ProductsList from './ProductsList';
 
 export default function Home() {
     return (
-        <Layout.Content className="content">
+        <>
             <header>
                 <div className="header-content">
                     <h1 className="header--title">Знижки від 50%*</h1>
@@ -14,6 +14,6 @@ export default function Home() {
             </header>
 
             <ProductsList />
-        </Layout.Content>
+        </>
     );
 }
