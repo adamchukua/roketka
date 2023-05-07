@@ -41,6 +41,7 @@ namespace Roketka.Services.ProductsService
             oldProduct.SectionId = product.SectionId;
             //oldProduct.Section = product.Section;
             oldProduct.UpdatedAt = DateTime.Now;
+
             await _context.SaveChangesAsync();
 
             return product;

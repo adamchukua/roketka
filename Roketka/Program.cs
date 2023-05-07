@@ -8,6 +8,7 @@ using Roketka.Services.Auth;
 using Roketka.Services.CommentsService;
 using Roketka.Services.PasswordHasher;
 using Roketka.Services.ProductsService;
+using Roketka.Services.SectionsService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,7 @@ builder.Services.AddTransient<IProductsService, ProductsService>();
 builder.Services.AddTransient<ICommentsService, CommentsService>();
 builder.Services.AddTransient<IAuth, Auth>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<ISectionsService, SectionService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

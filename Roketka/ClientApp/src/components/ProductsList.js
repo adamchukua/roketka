@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Switch, List, Pagination, Spin } from 'antd';
+import { Card, Row, Col, Switch, List, Pagination, Spin, Typography, Space, Select } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../features/products/productsSlice';
+import { fetchProducts, sortProductsByPrice } from '../features/products/productsSlice';
 
-export default function ProductsList() {
+export default function ProductsList(props) {
     const dispatch = useDispatch();
     const products = useSelector((state) => state.products);
     const [isCardView, setIsCardView] = useState(true);
@@ -23,6 +23,21 @@ export default function ProductsList() {
         setCurrentPage(page);
     };
 
+    const sortItems = [
+        {
+            key: '1',
+            label: 'Від дешевих до дорогих',
+        },
+        {
+            key: '2',
+            label: 'Від дорогих до дешевих',
+        },
+        {
+            key: '3',
+            label: 'За замовчуванням',
+        }
+    ];
+
     return (
         <>
             {products.status == 'loading' && (
@@ -37,53 +52,61 @@ export default function ProductsList() {
 
             {products.status === 'succeeded' && (
                 <>
-                    <Row justify="space-between">
+                    <Row justify="space-between" style={{ marginBottom: 20 }}>
                         <Col>
-                            <p>Знайдено елементів: {products.products.length}</p>
+                            <Typography.Text type="secondary">Знайдено елементів: {products.products.length}</Typography.Text>
                         </Col>
 
                         <Col>
-                            <Switch
-                                checked={isCardView}
-                                checkedChildren="Картки"
-                                unCheckedChildren="Список"
-                                onChange={handleSwitchChange}
-                            />
+                            <Space>
+                                <Select
+                                    defaultValue="Сортування"
+                                    style={{ width: 220 }}
+                                    onChange={(value) => dispatch(sortProductsByPrice(value))}
+                                    options={[
+                                        { value: 'cheap-to-expensive', label: 'Від дешевих до дорогих' },
+                                        { value: 'expensive-to-cheap', label: 'Від дорогих до дешевих' },
+                                    ]}
+                                />
+
+                                <Switch
+                                    checked={isCardView}
+                                    checkedChildren="Картки"
+                                    unCheckedChildren="Список"
+                                    onChange={handleSwitchChange}
+                                />
+                            </Space>
                         </Col>
                     </Row>
 
                     {isCardView ? (
-                        <div>
-                            <Row gutter={[16, 16]}>
-                                {products.products
-                                    .slice((currentPage - 1) * pageSize, currentPage * pageSize)
-                                    .map((product) => (
-                                        <Col span={6} key={product.id}>
-                                            <a href={"/product/" + product.id}>
-                                                <Card
-                                                    hoverable
-                                                    style={{ width: 340 }}
-                                                    cover={<img alt="example" src={product.images[0]} />}
-                                                >
-                                                    <Card.Meta title={product.title} description={product.price + currencyName} />
-                                                </Card>
-                                            </a>
-                                        </Col>
-                                    ))}
-                            </Row>
-                        </div>
+                        <Row gutter={[16, 16]}>
+                            {products.products
+                                .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                                .map((product) => (
+                                    <Col span={props.spanCard || 6} key={product.id}>
+                                        <a href={"/product/" + product.id}>
+                                            <Card
+                                                hoverable
+                                                style={{ width: 340 }}
+                                                cover={<img alt="example" src={product.images[0]} />}
+                                            >
+                                                <Card.Meta title={product.title} description={product.price + currencyName} />
+                                            </Card>
+                                        </a>
+                                    </Col>
+                                ))}
+                        </Row>
                     ) : (
-                        <div>
-                            <List
-                                dataSource={products.products
-                                    .slice((currentPage - 1) * pageSize, currentPage * pageSize)}
-                                renderItem={(product) => (
-                                    <List.Item key={product.id}>
-                                        <List.Item.Meta title={<a href={"/product/" + product.id}>{product.title}</a>} description={product.price + currencyName} />
-                                    </List.Item>
-                                )}
-                            />
-                        </div>
+                        <List
+                            dataSource={products.products
+                                .slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+                            renderItem={(product) => (
+                                <List.Item key={product.id}>
+                                    <List.Item.Meta title={<a href={"/product/" + product.id}>{product.title}</a>} description={product.price + currencyName} />
+                                </List.Item>
+                            )}
+                        />
                     )}
 
                     <Row justify="center">
