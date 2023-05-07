@@ -5,7 +5,7 @@ import { Layout as AntdLayout } from 'antd';
 
 export default function Layout(props) {
     return (
-        <AntdLayout>
+        <AntdLayout style={{ minHeight: "100vh" }}>
             <NavMenu />
 
             <AntdLayout className="content">

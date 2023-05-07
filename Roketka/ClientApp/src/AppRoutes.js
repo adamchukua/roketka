@@ -1,5 +1,6 @@
 import Home from './components/Home';
 import Catalog from './components/Catalog';
+import Product from './components/Product';
 
 const AppRoutes = [
     {
@@ -9,6 +10,10 @@ const AppRoutes = [
     {
         path: '/catalog',
         element: <Catalog />
+    },
+    {
+        path: '/product/:id',
+        element: <Product />
     }
 ];
 

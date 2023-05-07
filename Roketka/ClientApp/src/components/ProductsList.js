@@ -113,7 +113,7 @@ export default function ProductsList(props) {
                         <Pagination
                             current={currentPage}
                             pageSize={pageSize}
-                            total={products.length}
+                            total={products.products.length}
                             onChange={handlePageChange}
                             style={{ marginTop: 20 }}
                         />
