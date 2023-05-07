@@ -1,7 +1,11 @@
 ﻿import React from 'react';
 import { Row, Col, Layout, Space, Button } from 'antd';
+import { useDispatch } from 'react-redux';
+import { setVisible } from '../features/registerModal/registerModalSlice';
 
 export default function NavMenu() {
+    const dispatch = useDispatch();
+
     return (
         <Layout.Header>
             <Row style={{ width: '100%' }} justify={'space-between'}>
@@ -21,7 +25,7 @@ export default function NavMenu() {
 
                 <Col>
                     <Space>
-                        <Button>Зареєструватись</Button>
+                        <Button onClick={() => dispatch(setVisible())}>Зареєструватись</Button>
 
                         <Button>Увійти</Button>
                     </Space>

@@ -23,21 +23,6 @@ export default function ProductsList(props) {
         setCurrentPage(page);
     };
 
-    const sortItems = [
-        {
-            key: '1',
-            label: 'Від дешевих до дорогих',
-        },
-        {
-            key: '2',
-            label: 'Від дорогих до дешевих',
-        },
-        {
-            key: '3',
-            label: 'За замовчуванням',
-        }
-    ];
-
     return (
         <>
             {products.status == 'loading' && (

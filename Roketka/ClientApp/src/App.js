@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import { ConfigProvider, Button } from 'antd';
 import 'antd/dist/reset.css';
 import './custom.css';
+import RegisterModal from './components/RegisterModal';
 
 export default function App() {
     return (
@@ -16,7 +17,9 @@ export default function App() {
                 },
             }}
         >*/
-            <Layout>
+        <Layout>
+                <RegisterModal/>
+
                 <Routes>
                     {AppRoutes.map((route, index) => {
                         const { element, ...rest } = route;
