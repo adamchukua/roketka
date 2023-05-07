@@ -1,5 +1,14 @@
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
 .content {
-    padding: 0 50px;
+    padding: 30px 50px;
     background: #fff;
 }
 
@@ -7,12 +16,22 @@
     float: left;
 }
 
-.header {
-    /*background: #A7F0BA;*/
+header {
+    background: url("../public/images/blob.svg") no-repeat right / 35%;
+    height: 400px;
 }
 
-.header-menu {
-    background: #A7F0BA;
+.header-content {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.header--title {
+    font-size: 5.2rem;
+    margin-bottom: 20px;
 }
 
 .logo {

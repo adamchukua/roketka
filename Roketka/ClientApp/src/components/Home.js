@@ -1,27 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Layout } from 'antd';
-import Counter from './Counter';
+import ProductsList from './ProductsList';
 
 export default function Home() {
-    const [products, setProducts] = useState([]);
-
-    useEffect(() => {
-        fetch("api/Products/GetProducts")
-            .then(response => { return response.json() })
-            .then(responseJson => {
-                setProducts(responseJson)
-            });
-    }, []);
-
     return (
         <Layout.Content className="content">
-            {
-                products.map((item) => (
-                    <p>{item.title}</p>
-                    ))
-            }
+            <header>
+                <div className="header-content">
+                    <h1 className="header--title">Знижки від 50%*</h1>
 
-            <Counter/>
+                    <small className="header--small">*Тільки на товари що закінчились</small>
+                </div>
+            </header>
+
+            <ProductsList />
         </Layout.Content>
     );
 }
