@@ -1,14 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
-import counterSlice from "../features/counter/counterSlice.js"
-import productsSlice from "../features/products/productsSlice.js";
-import sectionsSlice from "../features/sections/sectionsSlice.js";
-import registerModalSlice from "../features/registerModal/registerModalSlice.js";
+import productsSlice from "../features/products/productsSlice";
+import sectionsSlice from "../features/sections/sectionsSlice";
+import registerSlice from "../features/register/registerSlice";
+import loginSlice from "../features/login/loginSlice";
 
 export const store = configureStore({
     reducer: {
-        counter: counterSlice,
         products: productsSlice,
         sections: sectionsSlice,
-        registerModal: registerModalSlice
+        register: registerSlice,
+        login: loginSlice
     }
 });

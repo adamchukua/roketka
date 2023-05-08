@@ -6,6 +6,7 @@ import { ConfigProvider, Button } from 'antd';
 import 'antd/dist/reset.css';
 import './custom.css';
 import RegisterModal from './components/RegisterModal';
+import LoginModal from './components/LoginModal';
 
 export default function App() {
     return (
@@ -18,7 +19,8 @@ export default function App() {
             }}
         >*/
         <Layout>
-                <RegisterModal/>
+                <RegisterModal />
+                <LoginModal />
 
                 <Routes>
                     {AppRoutes.map((route, index) => {

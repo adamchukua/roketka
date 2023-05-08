@@ -1,24 +1,36 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setModalInvisible } from '../features/register/registerSlice';
-import { Modal, Form, Input, Checkbox, Button } from 'antd';
+import { setModalInvisible, login } from '../features/login/loginSlice';
+import { Modal, Form, Input, Button } from 'antd';
+import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
 
-export default function RegisterModal() {
+export default function LoginModal() {
     const dispatch = useDispatch();
-    const isVisible = useSelector((state) => state.register.isModalVisible);
+    const navigate = useNavigate();
+    const isVisible = useSelector((state) => state.login.isModalVisible);
+    const apiError = useSelector((state) => state.login.error);
+    const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
 
     const onFinish = (values) => {
-        console.log('Success:', values);
+        dispatch(login(values));
     };
 
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate("/user");
+            dispatch(setModalInvisible());
+        }
+    });
+
     const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
+        //console.log('Failed:', errorInfo);
     };
 
     return (
         <Modal
             open={isVisible}
-            title="Реєстрація"
+            title="Вхід"
             onCancel={() => dispatch(setModalInvisible())}
             footer={null}
         >
@@ -33,28 +45,28 @@ export default function RegisterModal() {
                 autoComplete="off"
             >
                 <Form.Item
-                    label="Username"
-                    name="username"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
+                    label="Email"
+                    name="email"
+                    rules={[{ required: true, message: 'Будь ласка введіть пошту!' }]}
                 >
                     <Input />
                 </Form.Item>
 
                 <Form.Item
-                    label="Password"
+                    label="Пароль"
                     name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
+                    rules={[{ required: true, message: 'Будь ласка введіть пароль!' }]}
                 >
                     <Input.Password />
                 </Form.Item>
 
-                <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
-                    <Checkbox>Remember me</Checkbox>
-                </Form.Item>
+                {apiError}
+
+                {isLoggedIn ? "true" : "false"}
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit">
-                        Submit
+                        Увійти
                     </Button>
                 </Form.Item>
             </Form>

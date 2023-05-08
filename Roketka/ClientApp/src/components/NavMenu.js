@@ -1,7 +1,8 @@
 ﻿import React from 'react';
 import { Row, Col, Layout, Space, Button } from 'antd';
 import { useDispatch } from 'react-redux';
-import { setVisible } from '../features/registerModal/registerModalSlice';
+import { setModalVisible as setVisibleRegisterModal } from '../features/register/registerSlice';
+import { setModalVisible as setVisibleLoginModal } from '../features/login/loginSlice';
 
 export default function NavMenu() {
     const dispatch = useDispatch();
@@ -25,9 +26,9 @@ export default function NavMenu() {
 
                 <Col>
                     <Space>
-                        <Button onClick={() => dispatch(setVisible())}>Зареєструватись</Button>
+                        <Button onClick={() => dispatch(setVisibleRegisterModal())}>Зареєструватись</Button>
 
-                        <Button>Увійти</Button>
+                        <Button onClick={() => dispatch(setVisibleLoginModal())}>Увійти</Button>
                     </Space>
                 </Col>
             </Row>
