@@ -19,16 +19,16 @@ export default function App() {
             }}
         >*/
         <Layout>
-                <RegisterModal />
-                <LoginModal />
+            <RegisterModal />
+            <LoginModal />
 
-                <Routes>
-                    {AppRoutes.map((route, index) => {
-                        const { element, ...rest } = route;
-                        return <Route key={index} {...rest} element={element} />;
-                    })}
-                </Routes>
-            </Layout>
+            <Routes>
+                {AppRoutes.map((route, index) => {
+                    const { element, ...rest } = route;
+                    return <Route key={index} {...rest} element={element} />;
+                })}
+            </Routes>
+        </Layout>
         //</ConfigProvider>
     );
 }

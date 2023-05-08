@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Switch, List, Pagination, Spin, Typography, Space, Select } from 'antd';
+import { Card, Row, Col, Switch, List, Pagination, Spin, Typography, Space, Select, Segmented } from 'antd';
+import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts, sortProductsByPrice } from '../features/products/productsSlice';
 
@@ -15,9 +16,9 @@ export default function ProductsList(props) {
         dispatch(fetchProducts());
     }, []);
 
-    const handleSwitchChange = (checked) => {
-        setIsCardView(checked);
-    };
+    const handleSegmentedChange = (value) => {
+        setIsCardView(value == 'Card');
+    }
 
     const handlePageChange = (page, pageSize) => {
         setCurrentPage(page);
@@ -54,11 +55,20 @@ export default function ProductsList(props) {
                                     ]}
                                 />
 
-                                <Switch
-                                    checked={isCardView}
-                                    checkedChildren="Картки"
-                                    unCheckedChildren="Список"
-                                    onChange={handleSwitchChange}
+                                <Segmented
+                                    options={[
+                                        {
+                                            label: 'Картки',
+                                            value: 'Card',
+                                            icon: <AppstoreOutlined style={{ position: 'relative', top: '-3px' }} />,
+                                        },
+                                        {
+                                            label: 'Список',
+                                            value: 'List',
+                                            icon: <BarsOutlined style={{ position: 'relative', top: '-3px' }} />,
+                                        },
+                                    ]}
+                                    onChange={handleSegmentedChange}
                                 />
                             </Space>
                         </Col>
