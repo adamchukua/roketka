@@ -84,7 +84,11 @@ export default function ProductsList(props) {
                                             <Card
                                                 hoverable
                                                 style={{ width: 340 }}
-                                                cover={<img alt="example" src={product.images[0]} />}
+                                                cover={
+                                                    (product.images.length > 0) && (<img
+                                                        alt={product.title}
+                                                        src={"images/" + product.id + "/" + product.images[0].path} />)
+                                                }
                                             >
                                                 <Card.Meta title={product.title} description={product.price + currencyName} />
                                             </Card>

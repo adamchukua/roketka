@@ -14,7 +14,9 @@ namespace Roketka.Services.ProductsService
 
         public async Task<IEnumerable<Product>> Get()
         {
-            return await Task.FromResult(_context.Products.ToList());
+            return await Task.FromResult(_context.Products
+                .Include(p => p.Images)
+                .ToList());
         }
 
         public async Task<Product> Get(long id)
