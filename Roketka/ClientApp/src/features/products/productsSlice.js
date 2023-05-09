@@ -13,6 +13,12 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
         .then((response) => response.data);
 });
 
+export const fetchProductById = createAsyncThunk('products/fetchProductById', async (productId) => {
+    return axios
+        .get(`/api/Products/GetProduct/${productId}`)
+        .then((response) => response.data);
+});
+
 const productsSlice = createSlice({
     name: 'products',
     initialState,
@@ -45,6 +51,17 @@ const productsSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message;
             })
+            .addCase(fetchProductById.pending, (state, action) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchProductById.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.product = action.payload;
+            })
+            .addCase(fetchProductById.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            });
     }
 });
 

@@ -14,7 +14,9 @@ namespace Roketka.Services.CommentsService
 
         public async Task<Comment> Get(long id)
         {
-            return await _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.Comments
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Comment> Delete(long id)

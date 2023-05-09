@@ -19,8 +19,13 @@ namespace Roketka.Services.ProductsService
 
         public async Task<Product> Get(long id)
         {
-            return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.Products
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.User)
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
+
 
         public async Task<Product> Post(Product product)
         {
