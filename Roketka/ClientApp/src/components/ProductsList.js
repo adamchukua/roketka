@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Switch, List, Pagination, Spin, Typography, Space, Select, Segmented } from 'antd';
+import { Card, Row, Col, List, Pagination, Spin, Typography, Space, Select, Segmented } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts, sortProductsByPrice } from '../features/products/productsSlice';
@@ -9,15 +9,15 @@ export default function ProductsList(props) {
     const products = useSelector((state) => state.products);
     const [isCardView, setIsCardView] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(15);
+    const [pageSize] = useState(15);
     const currencyName = " грн";
 
     useEffect(() => {
         dispatch(fetchProducts());
-    }, []);
+    }, [dispatch]);
 
     const handleSegmentedChange = (value) => {
-        setIsCardView(value == 'Card');
+        setIsCardView(value === 'Card');
     }
 
     const handlePageChange = (page, pageSize) => {
@@ -26,7 +26,7 @@ export default function ProductsList(props) {
 
     return (
         <>
-            {products.status == 'loading' && (
+            {products.status === 'loading' && (
                 <>
                     <Row align='center' style={{ margin: '50px 0' }}>
                         <Spin size="large" />
@@ -34,7 +34,7 @@ export default function ProductsList(props) {
                 </>
             )}
 
-            {products.status == 'failed' && <div>Error: {products.error}</div>}
+            {products.status === 'failed' && <div>Error: {products.error}</div>}
 
             {products.status === 'succeeded' && (
                 <>
