@@ -17,29 +17,29 @@ namespace Roketka.Controllers
         }
 
         [HttpPost("Registration")]
-        public async Task<ActionResult<string>> Register(UserDto userDto)
+        public async Task<ActionResult<UserDto>> Register(UserCred userCred)
         {
-            var userToken = await _auth.Registration(userDto);
+            var userDto = await _auth.Registration(userCred);
 
-            if (userToken == null)
+            if (userDto == null)
             {
                 return Unauthorized();
             }
 
-            return Ok(userToken);
+            return Ok(userDto);
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<string>> Login(UserDto userDto)
+        public async Task<ActionResult<UserDto>> Login(UserCred userCred)
         {
-            var userToken = await _auth.Login(userDto);
+            var userDto = await _auth.Login(userCred);
 
-            if (userToken == null)
+            if (userDto == null)
             {
                 return Unauthorized("There is no users with these credits");
             }
 
-            return Ok(userToken);
+            return Ok(userDto);
         }
     }
 }

@@ -21,9 +21,9 @@ namespace Roketka.Services.Auth
             _configuration = configuration;
         }
 
-        public async Task<string> Login(UserDto userDto)
+        public async Task<UserDto> Login(UserCred userCred)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userDto.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userCred.Email);
 
             if (user == null)
             {
@@ -31,32 +31,41 @@ namespace Roketka.Services.Auth
             }
 
             var userPass = user.Password;
-            var userDtoPass = _passwordHasher.GeneratePasswordHash(userDto.Password);
+            var userDtoPass = _passwordHasher.GeneratePasswordHash(userCred.Password);
 
-            if (user.Password != _passwordHasher.GeneratePasswordHash(userDto.Password))
+            if (userPass != userDtoPass)
             {
                 return null;
             }
 
             var token = GenerateJwtToken(user);
 
-            return token;
+            return new UserDto
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Password = user.Password,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+                IsAdmin = user.IsAdmin,
+                Token = token
+            };
         }
 
-        public async Task<string> Registration(UserDto userDto)
+        public async Task<UserDto> Registration(UserCred userCred)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == userDto.Email))
+            if (await _context.Users.AnyAsync(u => u.Email == userCred.Email))
             {
                 return null;
             }
 
-            userDto.Password = _passwordHasher.GeneratePasswordHash(userDto.Password);
+            userCred.Password = _passwordHasher.GeneratePasswordHash(userCred.Password);
 
             var user = new User()
             {
-                Name = userDto.Name,
-                Email = userDto.Email,
-                Password = userDto.Password,
+                Name = userCred.Name,
+                Email = userCred.Email,
+                Password = userCred.Password,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -66,7 +75,16 @@ namespace Roketka.Services.Auth
 
             var token = GenerateJwtToken(user);
 
-            return token;
+            return new UserDto
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Password = user.Password,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+                IsAdmin = user.IsAdmin,
+                Token = token
+            };
         }
 
         private string GenerateJwtToken(User user)

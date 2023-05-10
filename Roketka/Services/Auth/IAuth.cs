@@ -4,7 +4,7 @@ namespace Roketka.Services.Auth
 {
     public interface IAuth
     {
-        Task<string> Login(UserDto userDto);
-        Task<string> Registration(UserDto userDto);
+        Task<UserDto> Login(UserCred userCred);
+        Task<UserDto> Registration(UserCred userCred);
     }
 }
