@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setModalInvisible } from '../features/register/registerSlice';
+import { setRegisterModalInvisible } from '../features/auth/authSlice';
 import { Modal, Form, Input, Checkbox, Button } from 'antd';
 
 export default function RegisterModal() {
     const dispatch = useDispatch();
-    const isVisible = useSelector((state) => state.register.isModalVisible);
+    const isVisible = useSelector((state) => state.auth.isRegisterModalVisible);
 
     const onFinish = (values) => {
         console.log('Success:', values);
@@ -19,7 +19,7 @@ export default function RegisterModal() {
         <Modal
             open={isVisible}
             title="Реєстрація"
-            onCancel={() => dispatch(setModalInvisible())}
+            onCancel={() => dispatch(setRegisterModalInvisible())}
             footer={null}
         >
             <Form

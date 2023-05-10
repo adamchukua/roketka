@@ -1,27 +1,17 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setModalInvisible, login } from '../features/login/loginSlice';
+import { setLoginModalInvisible, login } from '../features/auth/authSlice';
 import { Modal, Form, Input, Button } from 'antd';
-import { useNavigate } from "react-router-dom";
-import { useEffect } from 'react';
 
 export default function LoginModal() {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const isVisible = useSelector((state) => state.login.isModalVisible);
-    const apiError = useSelector((state) => state.login.error);
-    const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+    const isVisible = useSelector((state) => state.auth.isLoginModalVisible);
+    const apiError = useSelector((state) => state.auth.error);
 
     const onFinish = (values) => {
         dispatch(login(values));
+        dispatch(setLoginModalInvisible());
     };
-
-    useEffect(() => {
-        if (isLoggedIn) {
-            navigate("/user");
-            dispatch(setModalInvisible());
-        }
-    });
 
     const onFinishFailed = (errorInfo) => {
         //console.log('Failed:', errorInfo);
@@ -31,7 +21,7 @@ export default function LoginModal() {
         <Modal
             open={isVisible}
             title="Вхід"
-            onCancel={() => dispatch(setModalInvisible())}
+            onCancel={() => dispatch(setLoginModalInvisible())}
             footer={null}
         >
             <Form

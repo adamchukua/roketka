@@ -2,14 +2,15 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
 const initialState = {
-    isModalVisible: false,
+    isLoginModalVisible: false,
+    isRegisterModalVisible: false,
     isFetching: false,
     isLoggedIn: false,
     error: null
 }
 
 export const login = createAsyncThunk(
-    'login/login',
+    'auth/login',
     async ({ email, password }, thunkAPI) => {
         try {
             const response = await axios.post('/api/Auth/Login', { email, password });
@@ -20,15 +21,25 @@ export const login = createAsyncThunk(
     }
 );
 
-const loginSlice = createSlice({
-    name: 'login',
+const authSlice = createSlice({
+    name: 'auth',
     initialState,
     reducers: {
-        setModalVisible: (state) => {
-            state.isModalVisible = true;
+        setLoginModalVisible: (state) => {
+            state.isLoginModalVisible = true;
         },
-        setModalInvisible: (state) => {
-            state.isModalVisible = false;
+        setLoginModalInvisible: (state) => {
+            state.isLoginModalVisible = false;
+        },
+        setRegisterModalVisible: (state) => {
+            state.isRegisterModalVisible = true;
+        },
+        setRegisterModalInvisible: (state) => {
+            state.isRegisterModalVisible = false;
+        },
+        exit: (state) => {
+            localStorage.removeItem('token');
+            state.isLoggedIn = false;
         }
     },
     extraReducers: (builder) => {
@@ -51,6 +62,12 @@ const loginSlice = createSlice({
     }
 });
 
-export const { setModalVisible, setModalInvisible } = loginSlice.actions;
+export const {
+    setLoginModalVisible,
+    setLoginModalInvisible,
+    setRegisterModalVisible,
+    setRegisterModalInvisible,
+    exit
+} = authSlice.actions;
 
-export default loginSlice.reducer;
+export default authSlice.reducer;
