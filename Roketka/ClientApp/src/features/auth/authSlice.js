@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
+const tokenExpirationTime = new Date().getTime() + 7 * 24 * 3600 * 1000;
+
 const initialState = {
     isLoginModalVisible: false,
     isRegisterModalVisible: false,
@@ -14,7 +16,7 @@ export const login = createAsyncThunk(
     async ({ email, password }, thunkAPI) => {
         try {
             const response = await axios.post('/api/Auth/Login', { email, password });
-            localStorage.setItem('token', response.data);
+            localStorage.setItem('user', JSON.stringify(response.data));
         } catch (error) {
             return thunkAPI.rejectWithValue(error.response.data);
         }
@@ -38,7 +40,7 @@ const authSlice = createSlice({
             state.isRegisterModalVisible = false;
         },
         exit: (state) => {
-            localStorage.removeItem('token');
+            localStorage.removeItem('user');
             state.isLoggedIn = false;
         }
     },

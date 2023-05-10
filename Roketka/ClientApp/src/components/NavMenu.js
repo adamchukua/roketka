@@ -5,7 +5,7 @@ import { setLoginModalVisible, setRegisterModalVisible, exit } from '../features
 
 export default function NavMenu() {
     const dispatch = useDispatch();
-    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
     const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
 
     return (
@@ -26,17 +26,17 @@ export default function NavMenu() {
                 </Col>
 
                 <Col>
-                    {token || isLoggedIn ? (
-                        <>
+                    {user || isLoggedIn ? (
+                        <Space>
                             <a href="/user">
                                 <Space>
                                     <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
-                                    <div style={{ color: '#fff' }}>User 2</div>
+                                    <div style={{ color: '#fff' }}>{user.name}</div>
                                 </Space>
                             </a>
 
                             <Button onClick={() => dispatch(exit())}>Вийти</Button>
-                        </>
+                        </Space>
                     ) : (
                         <Space>
                             <Button onClick={() => dispatch(setRegisterModalVisible())}>Зареєструватись</Button>
