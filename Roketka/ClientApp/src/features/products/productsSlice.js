@@ -7,13 +7,17 @@ const initialState = {
     error: null
 }
 
-export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
+export const fetchProducts = createAsyncThunk(
+    'products/fetchProducts',
+    async () => {
     return axios
         .get('/api/Products/GetProducts')
         .then((response) => response.data);
 });
 
-export const fetchProductById = createAsyncThunk('products/fetchProductById', async (productId) => {
+export const fetchProductById = createAsyncThunk(
+    'products/fetchProductById',
+    async (productId) => {
     return axios
         .get(`/api/Products/GetProduct/${productId}`)
         .then((response) => response.data);

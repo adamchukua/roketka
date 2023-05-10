@@ -12,8 +12,6 @@ export default function Product() {
     const status = useSelector(state => state.products.status);
     const error = useSelector(state => state.products.error);
 
-    console.log(product);
-
     useEffect(() => {
         dispatch(fetchProductById(id));
     }, []);

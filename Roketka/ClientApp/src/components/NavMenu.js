@@ -2,7 +2,7 @@
 import { Row, Col, Layout, Space, Button, Avatar } from 'antd';
 import { useDispatch } from 'react-redux';
 import { setModalVisible as setVisibleRegisterModal } from '../features/register/registerSlice';
-import { setModalVisible as setVisibleLoginModal } from '../features/login/loginSlice';
+import { setModalVisible as setVisibleLoginModal, exit } from '../features/login/loginSlice';
 
 export default function NavMenu() {
     const dispatch = useDispatch();
@@ -32,6 +32,8 @@ export default function NavMenu() {
                                 <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
                                 <div style={{ color: '#fff' }}>User 2</div>
                             </Space>
+
+                            <Button onClick={() => dispatch(exit())}>Вийти</Button>
                         </a>
                     ) : (
                         <Space>

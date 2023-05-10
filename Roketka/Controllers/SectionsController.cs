@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Roketka.Models;
 using Roketka.Services.SectionsService;
+using System.Data;
 
 namespace Roketka.Controllers
 {
@@ -33,11 +35,10 @@ namespace Roketka.Controllers
             {
                 return NotFound();
             }
-
             return Ok(section);
         }
 
-        [HttpPost("AddSection")]
+        [HttpPost("AddSection"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<Section>> Post(Section section)
         {
             await _sectionsService.Post(section);
@@ -45,7 +46,7 @@ namespace Roketka.Controllers
             return Ok(section);
         }
 
-        [HttpPut("UpdateSection")]
+        [HttpPut("UpdateSection"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<Section>> Put(Section section)
         {
             await _sectionsService.Put(section);
@@ -53,7 +54,7 @@ namespace Roketka.Controllers
             return Ok(section);
         }
 
-        [HttpDelete("DeleteSection/{id}")]
+        [HttpDelete("DeleteSection/{id}"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<Section>> Delete(long id)
         {
             var section = await _sectionsService.Delete(id);

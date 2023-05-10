@@ -39,7 +39,7 @@ namespace Roketka.Controllers
             return Ok(product);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddProduct")]
         public async Task<ActionResult<Product>> Post(Product product)
         {
@@ -48,7 +48,7 @@ namespace Roketka.Controllers
             return Ok(product);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("UpdateProduct")]
         public async Task<ActionResult<Product>> Put(Product product)
         {
@@ -57,7 +57,7 @@ namespace Roketka.Controllers
             return Ok(product);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("DeleteProduct/{id}")]
         public async Task<ActionResult<Product>> Delete(long id)
         {

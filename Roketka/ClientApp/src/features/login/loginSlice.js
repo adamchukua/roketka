@@ -13,7 +13,7 @@ export const login = createAsyncThunk(
     async ({ email, password }, thunkAPI) => {
         try {
             const response = await axios.post('/api/Auth/Login', { email, password });
-            localStorage.setItem('token', response);
+            localStorage.setItem('token', response.data);
         } catch (error) {
             return thunkAPI.rejectWithValue(error.response.data);
         }
@@ -30,6 +30,10 @@ const loginSlice = createSlice({
         setModalInvisible: (state) => {
             state.isModalVisible = false;
         },
+        exit: (state) => {
+            localStorage.removeItem('token');
+            state.isLoggedIn = false;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -51,6 +55,6 @@ const loginSlice = createSlice({
     }
 });
 
-export const { setModalVisible, setModalInvisible } = loginSlice.actions;
+export const { setModalVisible, setModalInvisible, exit } = loginSlice.actions;
 
 export default loginSlice.reducer;

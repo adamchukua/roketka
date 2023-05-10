@@ -19,7 +19,7 @@ public partial class User
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
-
+    
     public byte IsAdmin { get; set; }
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();

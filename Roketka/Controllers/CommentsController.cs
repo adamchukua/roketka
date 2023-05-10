@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Roketka.Models;
 using Roketka.Services.CommentsService;
+using System.Security.Claims;
 
 namespace Roketka.Controllers
 {
@@ -30,6 +31,13 @@ namespace Roketka.Controllers
         [HttpPut("UpdateComment")]
         public async Task<ActionResult<Comment>> Put(Comment comment)
         {
+            var userId = User.FindFirstValue(ClaimTypes.Name);
+
+            if (comment.User.Id.ToString() != userId)
+            {
+                return Forbid();
+            }
+
             await _commentsService.Put(comment);
 
             return Ok(comment);
@@ -39,12 +47,20 @@ namespace Roketka.Controllers
         [HttpDelete("DeleteComment/{id}")]
         public async Task<ActionResult<Comment>> Delete(long id)
         {
-            var comment = await _commentsService.Delete(id);
+            var userId = User.FindFirstValue(ClaimTypes.Name);
+            var comment = await _commentsService.Get(id);
 
             if (comment == null)
             {
                 return NotFound();
             }
+
+            if (comment.User.Id.ToString() != userId)
+            {
+                return Forbid();
+            }
+
+            await _commentsService.Delete(id);
 
             return Ok(comment);
         }
