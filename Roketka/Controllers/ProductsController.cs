@@ -22,7 +22,6 @@ namespace Roketka.Controllers
         public async Task<ActionResult> Get()
         {
             var products = await _productsService.Get();
-            System.Threading.Thread.Sleep(1000); // TO DELETE
             return Ok(products);
         }
 

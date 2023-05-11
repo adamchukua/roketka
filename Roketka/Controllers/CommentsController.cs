@@ -18,6 +18,14 @@ namespace Roketka.Controllers
             _commentsService = commentsService;
         }
 
+        [HttpGet("GetCommentsByProductId/{productId}")]
+        public async Task<ActionResult<IEnumerable<Comment>>> GetByProductId(long productId)
+        {
+            var comments = await _commentsService.GetByProductId(productId);
+
+            return Ok(comments);
+        }
+
         [Authorize]
         [HttpPost("AddComment")]
         public async Task<ActionResult<Comment>> Post(Comment comment)

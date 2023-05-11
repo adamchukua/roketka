@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductById } from '../features/products/productsSlice';
 import { useEffect } from 'react';
 import { Typography, Row, Col, Spin, Button, List, Avatar, Carousel } from 'antd';
+import Comments from './Comments';
 
 export default function Product() {
     const id = useParams()["id"];
@@ -56,23 +57,13 @@ export default function Product() {
                         </Col>
                     </Row>
 
-                    <>
-                        <Typography.Title level={2} style={{ marginTop: 16 }}>Коментарі</Typography.Title>
+                    {product.comments && (
+                        <>
+                            <Typography.Title level={2} style={{ marginTop: 16 }}>Коментарі</Typography.Title>
 
-                        <List
-                            itemLayout="horizontal"
-                            dataSource={product.comments}
-                            renderItem={(comment, index) => (
-                                <List.Item>
-                                    <List.Item.Meta
-                                        avatar={<Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>}
-                                        title={comment.user.name}
-                                        description={comment.text}
-                                    />
-                                </List.Item>
-                            )}
-                        />
-                    </>
+                            <Comments productId={product.id} />
+                        </>
+                    )}
                 </>
             )}
         </>

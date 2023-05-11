@@ -32,7 +32,6 @@ const productsSlice = createSlice({
             state.products = products.filter(item => item.sectionId == payload.payload);
         },
         sortProductsByPrice: (state, payload) => {
-            console.log(payload.payload);
             if (payload.payload == 'cheap-to-expensive') {
                 state.products = state.products.sort((a, b) => a.price - b.price);
             } else if (payload.payload == 'expensive-to-cheap') {

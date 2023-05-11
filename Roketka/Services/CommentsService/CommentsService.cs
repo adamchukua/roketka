@@ -12,6 +12,14 @@ namespace Roketka.Services.CommentsService
             _context = context;
         }
 
+        public async Task<IEnumerable<Comment>> GetByProductId(long productId)
+        { 
+            return await _context.Comments
+                .Include(c => c.User)
+                .Where(c => c.ProductId == productId)
+                .ToListAsync();
+        }
+
         public async Task<Comment> Get(long id)
         {
             return await _context.Comments
