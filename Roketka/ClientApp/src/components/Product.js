@@ -3,8 +3,9 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductById } from '../features/products/productsSlice';
 import { useEffect } from 'react';
-import { Typography, Row, Col, Spin, Button, List, Avatar, Carousel } from 'antd';
+import { Typography, Row, Col, Button, Carousel } from 'antd';
 import Comments from './Comments';
+import PrintData from './PrintData';
 
 export default function Product() {
     const id = useParams()["id"];
@@ -15,21 +16,11 @@ export default function Product() {
 
     useEffect(() => {
         dispatch(fetchProductById(id));
-    }, []);
+    }, [dispatch, id]);
 
     return (
-        <>
-            {status == 'loading' && (
-                <>
-                    <Row align='center' style={{ margin: '50px 0' }}>
-                        <Spin size="large" />
-                    </Row>
-                </>
-            )}
-
-            {status == 'failed' && <div>Error: {error}</div>}
-
-            {status === 'succeeded' && (
+        <PrintData status={status} error={error}>
+            {product && (
                 <>
                     <Typography.Title>{product.title}</Typography.Title>
 
@@ -66,6 +57,6 @@ export default function Product() {
                     )}
                 </>
             )}
-        </>
+        </PrintData>
     )
 }

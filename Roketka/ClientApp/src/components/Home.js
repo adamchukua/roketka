@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Layout } from 'antd';
+import React from 'react';
 import ProductsList from './ProductsList';
 
 export default function Home() {
