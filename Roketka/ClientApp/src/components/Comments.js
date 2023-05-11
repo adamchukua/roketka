@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Row, Spin, List, Avatar, Pagination } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCommentsByProductId, addComment } from '../features/comments/commentsSlice';
+import { getUser } from '../features/auth/authSlice';
 
 export default function Comments({ productId }) {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = useSelector(state => state.auth.user);
     const comments = useSelector(state => state.comments.comments);
     const status = useSelector(state => state.comments.status);
     const error = useSelector(state => state.comments.error);
@@ -16,6 +17,10 @@ export default function Comments({ productId }) {
     useEffect(() => {
         dispatch(fetchCommentsByProductId(productId));
     }, []);
+
+    useEffect(() => {
+        dispatch(getUser());
+    }, [dispatch]);
 
     const handlePageChange = (page, pageSize) => {
         setCurrentPage(page);

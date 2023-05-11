@@ -1,13 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
-const tokenExpirationTime = new Date().getTime() + 7 * 24 * 3600 * 1000;
-
 const initialState = {
     isLoginModalVisible: false,
     isRegisterModalVisible: false,
     isFetching: false,
     isLoggedIn: false,
+    user: null,
     error: null
 }
 
@@ -17,8 +16,21 @@ export const login = createAsyncThunk(
         try {
             const response = await axios.post('/api/Auth/Login', { email, password });
             localStorage.setItem('user', JSON.stringify(response.data));
+            return response.data;
         } catch (error) {
             return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const getUser = createAsyncThunk(
+    'auth/getUser',
+    async () => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            return user;
+        } catch (error) {
+            return null;
         }
     }
 );
@@ -42,6 +54,7 @@ const authSlice = createSlice({
         exit: (state) => {
             localStorage.removeItem('user');
             state.isLoggedIn = false;
+            state.user = false;
         }
     },
     extraReducers: (builder) => {
@@ -51,15 +64,19 @@ const authSlice = createSlice({
                 state.isLoggedIn = false;
                 state.error = null;
             })
-            .addCase(login.fulfilled, (state) => {
+            .addCase(login.fulfilled, (state, action) => {
                 state.isFetching = false;
                 state.isLoggedIn = true;
                 state.error = null;
+                state.user = action.payload;
             })
             .addCase(login.rejected, (state, action) => {
                 state.isFetching = false;
                 state.isLoggedIn = false;
                 state.error = action.payload;
+            })
+            .addCase(getUser.fulfilled, (state, action) => {
+                state.user = action.payload;
             })
     }
 });

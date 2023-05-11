@@ -1,12 +1,15 @@
-﻿import React from 'react';
+﻿import React, { useEffect } from 'react';
 import { Row, Col, Layout, Space, Button, Avatar } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { setLoginModalVisible, setRegisterModalVisible, exit } from '../features/auth/authSlice';
+import { setLoginModalVisible, setRegisterModalVisible, exit, getUser } from '../features/auth/authSlice';
 
 export default function NavMenu() {
     const dispatch = useDispatch();
-    const user = JSON.parse(localStorage.getItem('user'));
-    const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+    const user = useSelector(state => state.auth.user);
+
+    useEffect(() => {
+        dispatch(getUser());
+    }, [dispatch]);
 
     return (
         <Layout.Header>
@@ -26,7 +29,7 @@ export default function NavMenu() {
                 </Col>
 
                 <Col>
-                    {user || isLoggedIn ? (
+                    {user ? (
                         <Space>
                             <a href="/user">
                                 <Space>
