@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Form, Input, Button, Row, Spin, List, Avatar } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Button, Row, Spin, List, Avatar, Pagination } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCommentsByProductId, addComment } from '../features/comments/commentsSlice';
 
@@ -9,11 +9,17 @@ export default function Comments({ productId }) {
     const status = useSelector(state => state.comments.status);
     const error = useSelector(state => state.comments.error);
     const [form] = Form.useForm();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize] = useState(15);
     const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(fetchCommentsByProductId(productId));
     }, []);
+
+    const handlePageChange = (page, pageSize) => {
+        setCurrentPage(page);
+    };
 
     const onFinish = (values) => {
         const text = values.text;
@@ -58,19 +64,31 @@ export default function Comments({ productId }) {
             {status == 'failed' && <div>Error: {error}</div>}
 
             {status === 'succeeded' && (
-                <List
-                    itemLayout="horizontal"
-                    dataSource={comments}
-                    renderItem={(comment, index) => (
-                        <List.Item key={index}>
-                            <List.Item.Meta
-                                avatar={<Avatar style={{ backgroundColor: '#f56a00' }}>{comment.user.name[0]}</Avatar>}
-                                title={comment.user.name}
-                                description={comment.text}
-                            />
-                        </List.Item>
-                    )}
-                />
+                <>
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={comments.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+                        renderItem={(comment, index) => (
+                            <List.Item key={index}>
+                                <List.Item.Meta
+                                    avatar={<Avatar style={{ backgroundColor: '#f56a00' }}>{comment.user.name[0]}</Avatar>}
+                                    title={comment.user.name}
+                                    description={comment.text}
+                                />
+                            </List.Item>
+                        )}
+                    />
+
+                    <Row justify="center">
+                        <Pagination
+                            current={currentPage}
+                            pageSize={pageSize}
+                            total={comments.length}
+                            onChange={handlePageChange}
+                            style={{ marginTop: 20 }}
+                        />
+                    </Row>
+                </>
             )}
         </>
     );

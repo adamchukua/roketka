@@ -26,7 +26,6 @@ namespace Roketka.Services.ProductsService
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-
         public async Task<Product> Post(Product product)
         {
             await _context.Products.AddAsync(product);
