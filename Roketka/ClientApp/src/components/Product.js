@@ -37,7 +37,7 @@ export default function Product() {
                         <Col span={16}>
                             <Carousel>
                                 {product.images.map(item => (
-                                    <div>
+                                    <div key={item.id}>
                                         <img
                                             src={"images/" + product.id + "/" + item.path}
                                             alt={product.title}

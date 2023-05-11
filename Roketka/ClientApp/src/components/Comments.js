@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Form, Input, Button, Row, Spin, List, Avatar } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCommentsByProductId } from '../features/comments/commentsSlice';
+import { fetchCommentsByProductId, addComment } from '../features/comments/commentsSlice';
 
 export default function Comments({ productId }) {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -16,7 +16,9 @@ export default function Comments({ productId }) {
     }, []);
 
     const onFinish = (values) => {
-        //addComment(productId, values.text);
+        const text = values.text;
+
+        dispatch(addComment({ productId, text } ));
 
         form.resetFields();
     };
@@ -60,7 +62,7 @@ export default function Comments({ productId }) {
                     itemLayout="horizontal"
                     dataSource={comments}
                     renderItem={(comment, index) => (
-                        <List.Item>
+                        <List.Item key={index}>
                             <List.Item.Meta
                                 avatar={<Avatar style={{ backgroundColor: '#f56a00' }}>{comment.user.name[0]}</Avatar>}
                                 title={comment.user.name}

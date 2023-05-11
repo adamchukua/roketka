@@ -47,7 +47,7 @@ namespace Roketka.Services.CommentsService
             await _context.Comments.AddAsync(comment);
             await _context.SaveChangesAsync();
 
-            return comment;
+            return await Get(comment.Id);
         }
 
         public async Task<Comment> Put(Comment comment)
