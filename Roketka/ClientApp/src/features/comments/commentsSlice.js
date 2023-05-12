@@ -56,6 +56,31 @@ export const deleteComment = createAsyncThunk(
             .then((response) => response.data);
     });
 
+export const editComment = createAsyncThunk(
+    'comments/editComment',
+    async ({ id, text }, thunkAPI) => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            //const userId = user.id;
+            const userToken = user.token;
+
+            const response = await axios.put(
+                '/api/Comments/UpdateComment',
+                { id, text },
+                {
+                    headers: {
+                        Authorization: `Bearer ${userToken}`,
+                    },
+                }
+            );
+
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
 const commentsSlice = createSlice({
     name: 'comments',
     initialState,
@@ -97,6 +122,19 @@ const commentsSlice = createSlice({
                 state.comments = state.comments.filter(comment => comment.id !== action.payload.id);
             })
             .addCase(deleteComment.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+            // editComment
+            .addCase(editComment.pending, (state, action) => {
+                state.status = 'loading';
+            })
+            .addCase(editComment.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                const comment = state.comments.findIndex((comment => comment.id === action.payload.id));
+                state.comments[comment].text = action.payload.text;
+            })
+            .addCase(editComment.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
             })

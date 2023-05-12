@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Row, List, Avatar, Pagination } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Row, List, Avatar, Pagination, Typography } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCommentsByProductId, addComment, deleteComment } from '../features/comments/commentsSlice';
+import { fetchCommentsByProductId, addComment, deleteComment, editComment } from '../features/comments/commentsSlice';
 import { getUser } from '../features/auth/authSlice';
 import PrintData from './PrintData';
 
@@ -70,11 +70,6 @@ export default function Comments({ productId }) {
                             actions={user && user.id === comment.user.id && [
                                 <Button
                                     type="link"
-                                    icon={<EditOutlined />}
-                                    onClick={() => alert(comment)}
-                                />,
-                                <Button
-                                    type="link"
                                     icon={<DeleteOutlined />}
                                     onClick={() => dispatch(deleteComment(comment.id))}
                                 />
@@ -83,7 +78,16 @@ export default function Comments({ productId }) {
                             <List.Item.Meta
                                 avatar={<Avatar style={{ backgroundColor: '#f56a00' }}>{comment.user.name[0]}</Avatar>}
                                 title={comment.user.name}
-                                description={comment.text}
+                                description={
+                                    user && user.id === comment.user.id ? (
+                                        <Typography.Paragraph
+                                            editable={{
+                                                onChange: (text) =>
+                                                    dispatch(editComment({ id: comment.id, text: text }))
+                                            }}>
+                                            {comment.text}
+                                        </Typography.Paragraph>
+                                ) : comment.text }
                             />
                         </List.Item>
                     )}

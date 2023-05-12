@@ -26,6 +26,14 @@ namespace Roketka.Controllers
             return Ok(comments);
         }
 
+        [HttpGet("GetComment/{id}")]
+        public async Task<ActionResult<Comment>> Get(long id)
+        {
+            var comment = await _commentsService.Get(id);
+
+            return Ok(comment);
+        }
+
         [Authorize]
         [HttpPost("AddComment")]
         public async Task<ActionResult<Comment>> Post(Comment comment)
@@ -40,8 +48,9 @@ namespace Roketka.Controllers
         public async Task<ActionResult<Comment>> Put(Comment comment)
         {
             var userId = User.FindFirstValue(ClaimTypes.Name);
+            var oldComment = await _commentsService.Get(comment.Id);
 
-            if (comment.User.Id.ToString() != userId)
+            if (oldComment.UserId.ToString() != userId)
             {
                 return Forbid();
             }
