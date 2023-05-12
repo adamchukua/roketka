@@ -1,6 +1,7 @@
 import Home from './components/Home';
 import Catalog from './components/Catalog';
 import Product from './components/Product';
+import Admin from './components/Admin';
 
 const AppRoutes = [
     {
@@ -14,6 +15,10 @@ const AppRoutes = [
     {
         path: '/product/:id',
         element: <Product />
+    },
+    {
+        path: '/admin',
+        element: <Admin />
     }
 ];
 

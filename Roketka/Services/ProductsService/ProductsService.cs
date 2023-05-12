@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Roketka.Models;
+using System.Linq;
 
 namespace Roketka.Services.ProductsService
 {
@@ -16,6 +17,7 @@ namespace Roketka.Services.ProductsService
         {
             return await Task.FromResult(_context.Products
                 .Include(p => p.Images)
+                .Include(p => p.Section)
                 .ToList());
         }
 
@@ -64,6 +66,23 @@ namespace Roketka.Services.ProductsService
             await _context.SaveChangesAsync();
 
             return product;
+        }
+
+        public async Task<IEnumerable<int>> Delete(IEnumerable<int> productIds)
+        {
+            var products = await _context.Products
+                .Where(p => productIds.Contains((int)p.Id))
+                .ToListAsync();
+
+            if (products == null)
+            {
+                return null;
+            }
+
+            _context.Products.RemoveRange(products);
+            await _context.SaveChangesAsync();
+
+            return productIds;
         }
     }
 }

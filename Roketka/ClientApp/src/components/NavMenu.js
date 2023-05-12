@@ -2,6 +2,7 @@
 import { Row, Col, Layout, Space, Button, Avatar } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoginModalVisible, setRegisterModalVisible, exit, getUser } from '../features/auth/authSlice';
+import AdminLayout from './AdminLayout';
 
 export default function NavMenu() {
     const dispatch = useDispatch();
@@ -25,6 +26,10 @@ export default function NavMenu() {
                         <a href="/catalog" className="link-white">Каталог</a>
 
                         <a href="/about" className="link-white">Про нас</a>
+
+                        <AdminLayout>
+                            <a href="/admin" className="link-white">Адмін-панель</a>
+                        </AdminLayout>
                     </Space>
                 </Col>
 

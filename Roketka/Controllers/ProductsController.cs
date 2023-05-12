@@ -69,5 +69,19 @@ namespace Roketka.Controllers
 
             return Ok(product);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("DeleteProducts")]
+        public async Task<ActionResult<Product>> Delete(IEnumerable<int> products)
+        {
+            var deletedInts = await _productsService.Delete(products);
+
+            if (deletedInts == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(deletedInts);
+        }
     }
 }
