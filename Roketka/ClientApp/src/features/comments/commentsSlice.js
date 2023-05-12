@@ -22,7 +22,6 @@ export const addComment = createAsyncThunk(
             const user = JSON.parse(localStorage.getItem('user'));
             const userId = user.id;
             const userToken = user.token;
-            console.log(user);
 
             const response = await axios.post(
                 '/api/Comments/AddComment',
@@ -41,6 +40,22 @@ export const addComment = createAsyncThunk(
     }
 );
 
+export const deleteComment = createAsyncThunk(
+    'comments/deleteComment',
+    async (id) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+
+        return axios
+            .delete(`/api/Comments/DeleteComment/${id}`, config)
+            .then((response) => response.data);
+    });
+
 const commentsSlice = createSlice({
     name: 'comments',
     initialState,
@@ -49,6 +64,7 @@ const commentsSlice = createSlice({
     },
     extraReducers(builder) {
         builder
+            // fetchCommentsByProductId
             .addCase(fetchCommentsByProductId.pending, (state, action) => {
                 state.status = 'loading';
             })
@@ -60,6 +76,7 @@ const commentsSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message;
             })
+            // addComment
             .addCase(addComment.pending, (state, action) => {
                 state.status = 'loading';
             })
@@ -68,6 +85,18 @@ const commentsSlice = createSlice({
                 state.comments.push(action.payload);
             })
             .addCase(addComment.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+            // deleteComment
+            .addCase(deleteComment.pending, (state, action) => {
+                state.status = 'loading';
+            })
+            .addCase(deleteComment.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.comments = state.comments.filter(comment => comment.id !== action.payload.id);
+            })
+            .addCase(deleteComment.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
             })

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Row, Spin, List, Avatar, Pagination } from 'antd';
+import { Form, Input, Button, Row, List, Avatar, Pagination } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCommentsByProductId, addComment } from '../features/comments/commentsSlice';
+import { fetchCommentsByProductId, addComment, deleteComment } from '../features/comments/commentsSlice';
 import { getUser } from '../features/auth/authSlice';
+import PrintData from './PrintData';
 
 export default function Comments({ productId }) {
     const user = useSelector(state => state.auth.user);
@@ -58,43 +60,45 @@ export default function Comments({ productId }) {
                 </Form>
             )}
 
-            {status == 'loading' && (
-                <>
-                    <Row align='center' style={{ margin: '50px 0' }}>
-                        <Spin size="large" />
-                    </Row>
-                </>
-            )}
-
-            {status == 'failed' && <div>Error: {error}</div>}
-
-            {status === 'succeeded' && (
-                <>
-                    <List
-                        itemLayout="horizontal"
-                        dataSource={comments.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
-                        renderItem={(comment, index) => (
-                            <List.Item key={index}>
-                                <List.Item.Meta
-                                    avatar={<Avatar style={{ backgroundColor: '#f56a00' }}>{comment.user.name[0]}</Avatar>}
-                                    title={comment.user.name}
-                                    description={comment.text}
+            <PrintData status={status} error={error}>
+                <List
+                    itemLayout="horizontal"
+                    dataSource={comments.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+                    renderItem={(comment, index) => (
+                        <List.Item
+                            key={index}
+                            actions={user && user.id === comment.user.id && [
+                                <Button
+                                    type="link"
+                                    icon={<EditOutlined />}
+                                    onClick={() => alert(comment)}
+                                />,
+                                <Button
+                                    type="link"
+                                    icon={<DeleteOutlined />}
+                                    onClick={() => dispatch(deleteComment(comment.id))}
                                 />
-                            </List.Item>
-                        )}
-                    />
+                            ]}
+                        >
+                            <List.Item.Meta
+                                avatar={<Avatar style={{ backgroundColor: '#f56a00' }}>{comment.user.name[0]}</Avatar>}
+                                title={comment.user.name}
+                                description={comment.text}
+                            />
+                        </List.Item>
+                    )}
+                />
 
-                    <Row justify="center">
-                        <Pagination
-                            current={currentPage}
-                            pageSize={pageSize}
-                            total={comments.length}
-                            onChange={handlePageChange}
-                            style={{ marginTop: 20 }}
-                        />
-                    </Row>
-                </>
-            )}
+                <Row justify="center">
+                    <Pagination
+                        current={currentPage}
+                        pageSize={pageSize}
+                        total={comments.length}
+                        onChange={handlePageChange}
+                        style={{ marginTop: 20 }}
+                    />
+                </Row>
+            </PrintData>
         </>
     );
 };
