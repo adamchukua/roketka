@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
+import jwt from 'jwt-decode';
 
 const initialState = {
     isLoginModalVisible: false,
@@ -77,6 +78,14 @@ const authSlice = createSlice({
             })
             .addCase(getUser.fulfilled, (state, action) => {
                 state.user = action.payload;
+
+                const { exp } = jwt(state.user.token);
+                const expirationTime = (exp * 1000) - 60000;
+                if (Date.now() > expirationTime) {
+                    localStorage.removeItem('user');
+                    state.isLoggedIn = false;
+                    state.user = false;
+                }
             })
     }
 });
