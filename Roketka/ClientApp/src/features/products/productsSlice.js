@@ -57,6 +57,7 @@ export const addProduct = createAsyncThunk(
                 {
                     headers: {
                         Authorization: `Bearer ${userToken}`,
+                        'Content-Type': 'multipart/form-data'
                     }
                 }
             );

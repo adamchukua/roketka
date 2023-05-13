@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.EntityFrameworkCore;
 using Roketka.Models;
 using System.Linq;
 
@@ -7,6 +8,7 @@ namespace Roketka.Services.ProductsService
     public class ProductsService : IProductsService
     {
         private readonly RoketkaContext _context;
+        private const string IMAGES_PATH = "ClientApp/public/images/";
 
         public ProductsService(RoketkaContext context)
         {
@@ -65,6 +67,8 @@ namespace Roketka.Services.ProductsService
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
+            DeleteFiles(id);
+
             return product;
         }
 
@@ -82,7 +86,23 @@ namespace Roketka.Services.ProductsService
             _context.Products.RemoveRange(products);
             await _context.SaveChangesAsync();
 
+            foreach (var id in productIds)
+            {
+                DeleteFiles(id);
+            }
+
             return productIds;
+        }
+
+        private void DeleteFiles(long productId)
+        {
+            var path = IMAGES_PATH + productId;
+            var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+            foreach (string file in files)
+            {
+                File.Delete(file);
+            }
+            Directory.Delete(path);
         }
     }
 }

@@ -1,26 +1,62 @@
-import React from 'react';
-import { Form, Input, Select, Button } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Select, Button, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { addProduct } from '../../features/products/productsSlice';
 import { fetchSections } from '../../features/sections/sectionsSlice';
-import { useEffect } from 'react';
+import { getUser } from '../../features/auth/authSlice';
 
 const { Option } = Select;
 
 export default function AddProductForm({ onFinishForm }) {
     const dispatch = useDispatch();
     const sections = useSelector(state => state.sections.sections);
+    const userToken = useSelector(state => state.auth.user.token);
     const [form] = Form.useForm();
+    const [imageList, setImageList] = useState([]);
 
     useEffect(() => {
         dispatch(fetchSections());
+        dispatch(getUser());
     }, [dispatch]);
 
-    const onFinish = (values) => {
-        dispatch(addProduct(values));
+    const onFinish = async (values) => {
+        const productData = new FormData();
+        productData.append('title', values.title);
+        productData.append('description', values.description);
+        productData.append('price', values.price);
+        productData.append('quantity', values.quantity);
+        productData.append('sectionId', values.sectionId);
 
-        form.resetFields();
-        onFinishForm();
+        const productResponse = await dispatch(addProduct(productData));
+
+        const formData = new FormData();
+        for (let i = 0; i < imageList.length; i++) {
+            formData.append('files', imageList[i]);
+        }
+        formData.append('productId', productResponse.payload.id);
+
+        const imagesResponse = await fetch('/api/Images/Upload', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${userToken}`
+            },
+        });
+
+        if (imagesResponse.ok) {
+            message.success('Товар додано!');
+            setImageList([]);
+            form.resetFields();
+            onFinishForm();
+        } else {
+            message.error('Помилка!');
+        }
+    };
+
+    const handleImageChange = (event) => {
+        const files = event.target.files;
+        setImageList(files);
     };
 
     const validateMessages = {
@@ -98,9 +134,13 @@ export default function AddProductForm({ onFinishForm }) {
             >
                 <Select>
                     {sections.map(section => (
-                        <Option value={section.id}>{section.title}</Option>
+                        <Option value={section.id} key={section.id}>{section.title}</Option>
                     ))}
                 </Select>
+            </Form.Item>
+
+            <Form.Item label="Зображення" valuePropName="imageList">
+                <input type="file" multiple onChange={handleImageChange} />
             </Form.Item>
 
             <Form.Item>

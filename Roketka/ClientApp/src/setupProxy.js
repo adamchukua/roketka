@@ -9,7 +9,8 @@ const context = [
     "/api/Products",
     "/api/Comments",
     "/api/Auth",
-    "/api/Sections"
+    "/api/Sections",
+    "/api/Images"
 ];
 
 const onError = (err, req, resp, target) => {

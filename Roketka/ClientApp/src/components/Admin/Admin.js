@@ -7,8 +7,6 @@ import { fetchComments, deleteComments } from '../../features/comments/commentsS
 import PrintData from '../PrintData';
 import AddProductForm from './AddProductForm';
 
-const { TabPane } = Tabs;
-
 const productColumns = [
     {
         title: "id",
@@ -120,12 +118,12 @@ export default function Admin() {
         setInvisibleAddProductModal();
     };
 
-    return (
-        <AdminLayout redirect={true}>
-            <Typography.Title>Адмін-панель</Typography.Title>
-
-            <Tabs defaultActiveKey="1">
-                <TabPane tab="Товари" key="1">
+    const tabItems = [
+        {
+            key: '1',
+            label: 'Товари',
+            children: (
+                <>
                     <div style={{ marginBottom: 16 }}>
                         <Space>
                             <Button type="primary" onClick={setVisibleAddProductModal}>
@@ -145,8 +143,14 @@ export default function Admin() {
                     <PrintData status={products.status} error={products.error}>
                         <Table rowSelection={rowProductsSelection} columns={productColumns} dataSource={productsList} />
                     </PrintData>
-                </TabPane>
-                <TabPane tab="Коментарі" key="2">
+                </>
+            )
+        },
+        {
+            key: '2',
+            label: 'Коментарі',
+            children: (
+                <>
                     <div style={{ marginBottom: 16 }}>
                         <Space>
                             <Button type="primary" onClick={deleteCommentsAndClearSelected} disabled={!hasSelectedComments}>
@@ -162,8 +166,16 @@ export default function Admin() {
                     <PrintData status={comments.status} error={comments.error}>
                         <Table rowSelection={rowCommentsSelection} columns={commentsColumns} dataSource={commentsList} />
                     </PrintData>
-                </TabPane>
-            </Tabs>
+                </>
+            )
+        }
+    ];
+
+    return (
+        <AdminLayout redirect={true}>
+            <Typography.Title>Адмін-панель</Typography.Title>
+
+            <Tabs defaultActiveKey="1" items={tabItems} />
 
             <Modal
                 open={addProductModalVisible}

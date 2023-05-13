@@ -54,6 +54,7 @@ public partial class RoketkaContext : DbContext
 
             entity.HasOne(d => d.Product).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_comments_products");
 
             entity.HasOne(d => d.User).WithMany(p => p.Comments)
@@ -80,7 +81,8 @@ public partial class RoketkaContext : DbContext
 
             entity.HasOne(d => d.Product).WithMany(p => p.Images)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_images_goods");
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_images_products");
         });
 
         modelBuilder.Entity<Product>(entity =>

@@ -40,7 +40,7 @@ namespace Roketka.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("AddProduct")]
-        public async Task<ActionResult<Product>> Post(Product product)
+        public async Task<ActionResult<Product>> Post([FromForm]Product product)
         {
             await _productsService.Post(product);
 
