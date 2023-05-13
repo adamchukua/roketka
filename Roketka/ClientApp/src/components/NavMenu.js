@@ -8,6 +8,14 @@ export default function NavMenu() {
     const dispatch = useDispatch();
     const user = useSelector(state => state.auth.user);
 
+    const shortenText = (text) => {
+        if (text.length <= 20) {
+            return text;
+        } else {
+            return text.slice(0, 20) + "...";
+        }
+    };
+
     useEffect(() => {
         dispatch(getUser());
     }, [dispatch]);
@@ -38,8 +46,8 @@ export default function NavMenu() {
                         <Space>
                             <a href="/user">
                                 <Space>
-                                    <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
-                                    <div style={{ color: '#fff' }}>{user.name}</div>
+                                    <Avatar style={{ backgroundColor: '#f56a00' }}>{user.name[0]}</Avatar>
+                                    <div style={{ color: '#fff' }}>{shortenText(user.name)}</div>
                                 </Space>
                             </a>
 

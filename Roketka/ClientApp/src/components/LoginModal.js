@@ -2,17 +2,12 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLoginModalInvisible, login, getUser } from '../features/auth/authSlice';
 import { Modal, Form, Input, Button, message } from 'antd';
-import { useEffect } from 'react';
 
 export default function LoginModal() {
     const dispatch = useDispatch();
-    const isVisible = useSelector((state) => state.auth.isLoginModalVisible);
-    const user = useSelector(state => state.auth.user);
+    const isVisible = useSelector(state => state.auth.isLoginModalVisible);
     const [messageApi, contextHolder] = message.useMessage();
-
-    useEffect(() => {
-        dispatch(getUser());
-    }, [dispatch]);
+    const [form] = Form.useForm();
 
     const onFinish = async (values) => {
         const responce = await dispatch(login(values));
@@ -24,6 +19,8 @@ export default function LoginModal() {
                 type: 'success',
                 content: 'Ви успішно авторизувались',
             });
+
+            form.resetFields();
         } else {
             messageApi.open({
                 type: 'error',
@@ -44,6 +41,7 @@ export default function LoginModal() {
             >
                 <Form
                     name="basic"
+                    form={form}
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 600 }}

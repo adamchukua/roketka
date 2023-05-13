@@ -24,6 +24,19 @@ export const login = createAsyncThunk(
     }
 );
 
+export const register = createAsyncThunk(
+    'auth/register',
+    async (user, thunkAPI) => {
+        try {
+            const response = await axios.post('/api/Auth/Registration', user);
+            localStorage.setItem('user', JSON.stringify(response.data));
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
 export const getUser = createAsyncThunk(
     'auth/getUser',
     async () => {
@@ -60,6 +73,7 @@ const authSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // login
             .addCase(login.pending, (state) => {
                 state.isFetching = true;
                 state.isLoggedIn = false;
@@ -89,6 +103,23 @@ const authSlice = createSlice({
                     }
                 }
             })
+            // register
+            .addCase(register.pending, (state) => {
+                state.isFetching = true;
+                state.isLoggedIn = false;
+                state.error = null;
+            })
+            .addCase(register.fulfilled, (state, action) => {
+                state.isFetching = false;
+                state.isLoggedIn = true;
+                state.error = null;
+                state.user = action.payload;
+            })
+            .addCase(register.rejected, (state, action) => {
+                state.isFetching = false;
+                state.isLoggedIn = false;
+                state.error = action.payload;
+            });
     }
 });
 
