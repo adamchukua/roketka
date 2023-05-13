@@ -7,13 +7,12 @@ import { getUser } from '../../features/auth/authSlice';
 
 const { Option } = Select;
 
-export default function AddProductForm({ onFinishForm }) {
+export default function AddProductForm({ onFinishForm, products }) {
     const dispatch = useDispatch();
-    const sections = useSelector(state => state.sections.sections);
+    const sections = useSelector(state => state.sections.sections.filter(section => section.subsectionId !== null));
     const userToken = useSelector(state => state.auth.user.token);
     const [form] = Form.useForm();
     const [imageList, setImageList] = useState([]);
-
     useEffect(() => {
         dispatch(fetchSections());
         dispatch(getUser());
@@ -63,7 +62,14 @@ export default function AddProductForm({ onFinishForm }) {
         required: '${label} - обов\'язкове поле!',
         types: {
             pattern: '${label} - не валідне число!',
-        },
+        }
+    };
+
+    const checkTitle = async (rule, value) => {
+        const exists = products.some(product => product.title === value);
+        if (exists) {
+            throw new Error('Така назва вже існує!');
+        }
     };
 
     return (
@@ -82,6 +88,9 @@ export default function AddProductForm({ onFinishForm }) {
                 rules={[
                     {
                         required: true,
+                    },
+                    {
+                        validator: checkTitle,
                     },
                 ]}
             >

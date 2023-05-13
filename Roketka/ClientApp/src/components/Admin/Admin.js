@@ -183,7 +183,7 @@ export default function Admin() {
                 onCancel={setInvisibleAddProductModal}
                 footer={null}
             >
-                <AddProductForm onFinishForm={onFinishAddProductForm} />
+                <AddProductForm onFinishForm={onFinishAddProductForm} products={productsList} />
             </Modal>
         </AdminLayout>
     );
