@@ -12,6 +12,7 @@ const productColumns = [
         title: "id",
         dataIndex: "id",
         key: "id",
+        render: (id) => <a target='_blank' href={"/product/" + id}>{id}</a>
     },
     {
         title: "Назва",
@@ -20,8 +21,9 @@ const productColumns = [
     },
     {
         title: "Категорія",
-        dataIndex: "sectionId",
-        key: "sectionId",
+        dataIndex: "section",
+        key: "section",
+        render: (section) => section.title
     },
     {
         title: "Кількість",
@@ -47,9 +49,10 @@ const commentsColumns = [
         key: "userId",
     },
     {
-        title: "id товару",
-        dataIndex: "productId",
-        key: "productId",
+        title: "Товар",
+        dataIndex: "product",
+        key: "product",
+        render: (product) => <a target='_blank' href={'/product/' + product.id}>{product.title}</a> 
     },
     {
         title: "Текст",
@@ -68,7 +71,7 @@ export default function Admin() {
     const [selectedCommentIds, setSelectedCommentIds] = useState([]);
 
     const [addProductModalVisible, setAddProductModalVisible] = useState(false);
-
+    
     useEffect(() => {
         dispatch(fetchProducts());
         dispatch(fetchComments());

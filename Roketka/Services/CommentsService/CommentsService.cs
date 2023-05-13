@@ -16,6 +16,7 @@ namespace Roketka.Services.CommentsService
         {
             return await _context.Comments
                 .Include(c => c.User)
+                .Include(c => c.Product)
                 .ToListAsync();
         }
 
