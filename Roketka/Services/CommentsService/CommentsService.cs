@@ -12,6 +12,13 @@ namespace Roketka.Services.CommentsService
             _context = context;
         }
 
+        public async Task<IEnumerable<Comment>> Get()
+        {
+            return await _context.Comments
+                .Include(c => c.User)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Comment>> GetByProductId(long productId)
         { 
             return await _context.Comments
@@ -59,6 +66,23 @@ namespace Roketka.Services.CommentsService
             await _context.SaveChangesAsync();
 
             return oldComment;
+        }
+
+        public async Task<IEnumerable<int>> Delete(IEnumerable<int> commentIds)
+        {
+            var comments = await _context.Comments
+                .Where(c => commentIds.Contains((int)c.Id))
+                .ToListAsync();
+
+            if (comments == null)
+            {
+                return null;
+            }
+
+            _context.Comments.RemoveRange(comments);
+            await _context.SaveChangesAsync();
+
+            return commentIds;
         }
     }
 }

@@ -79,12 +79,14 @@ const authSlice = createSlice({
             .addCase(getUser.fulfilled, (state, action) => {
                 state.user = action.payload;
 
-                const { exp } = jwt(state.user.token);
-                const expirationTime = (exp * 1000) - 60000;
-                if (Date.now() > expirationTime) {
-                    localStorage.removeItem('user');
-                    state.isLoggedIn = false;
-                    state.user = false;
+                if (state.user) {
+                    const { exp } = jwt(state.user.token);
+                    const expirationTime = (exp * 1000) - 60000;
+                    if (Date.now() > expirationTime) {
+                        localStorage.removeItem('user');
+                        state.isLoggedIn = false;
+                        state.user = false;
+                    }
                 }
             })
     }

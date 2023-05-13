@@ -44,6 +44,29 @@ export const deleteProducts = createAsyncThunk(
         }
     });
 
+export const addProduct = createAsyncThunk(
+    'products/addProduct',
+    async (product, thunkAPI) => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const userToken = user.token;
+
+            const response = await axios.post(
+                '/api/Products/AddProduct',
+                product,
+                {
+                    headers: {
+                        Authorization: `Bearer ${userToken}`,
+                    }
+                }
+            );
+
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    });
+
 const productsSlice = createSlice({
     name: 'products',
     initialState,
@@ -97,6 +120,18 @@ const productsSlice = createSlice({
                 state.products = state.products.filter(product => !action.payload.includes(product.id));
             })
             .addCase(deleteProducts.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+            // addProduct
+            .addCase(addProduct.pending, (state, action) => {
+                state.status = 'loading';
+            })
+            .addCase(addProduct.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.products.push(action.payload);
+            })
+            .addCase(addProduct.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
             });

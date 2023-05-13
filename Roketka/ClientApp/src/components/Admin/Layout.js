@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getUser } from '../features/auth/authSlice';
+import { getUser } from '../../features/auth/authSlice';
 
 export default function Admin({ redirect, children }) {
     const dispatch = useDispatch();

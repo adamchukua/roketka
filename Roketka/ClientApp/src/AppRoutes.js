@@ -1,7 +1,7 @@
 import Home from './components/Home';
 import Catalog from './components/Catalog';
 import Product from './components/Product';
-import Admin from './components/Admin';
+import Admin from './components/Admin/Admin';
 
 const AppRoutes = [
     {

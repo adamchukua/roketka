@@ -2,7 +2,7 @@
 import { Row, Col, Layout, Space, Button, Avatar } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoginModalVisible, setRegisterModalVisible, exit, getUser } from '../features/auth/authSlice';
-import AdminLayout from './AdminLayout';
+import AdminLayout from './Admin/Layout';
 
 export default function NavMenu() {
     const dispatch = useDispatch();

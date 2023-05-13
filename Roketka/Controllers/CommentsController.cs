@@ -18,6 +18,15 @@ namespace Roketka.Controllers
             _commentsService = commentsService;
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetComments")]
+        public async Task<ActionResult<IEnumerable<Comment>>> Get()
+        {
+            var comments = await _commentsService.Get();
+
+            return Ok(comments);
+        }
+
         [HttpGet("GetCommentsByProductId/{productId}")]
         public async Task<ActionResult<IEnumerable<Comment>>> GetByProductId(long productId)
         {
@@ -80,6 +89,20 @@ namespace Roketka.Controllers
             await _commentsService.Delete(id);
 
             return Ok(comment);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("DeleteComments")]
+        public async Task<ActionResult<Comment>> Delete(IEnumerable<int> comments)
+        {
+            var deletedIds = await _commentsService.Delete(comments);
+
+            if (deletedIds == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(deletedIds);
         }
     }
 }

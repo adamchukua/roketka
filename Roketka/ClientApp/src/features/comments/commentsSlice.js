@@ -15,6 +15,24 @@ export const fetchCommentsByProductId = createAsyncThunk(
             .then((response) => response.data);
     });
 
+export const fetchComments = createAsyncThunk(
+    'comments/fetchComments',
+    async () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userToken = user.token;
+
+        const response = await axios.get(
+            '/api/Comments/GetComments',
+            {
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+            }
+        );
+
+        return response.data;
+    });
+
 export const addComment = createAsyncThunk(
     'comments/addComment',
     async ({ productId, text }, thunkAPI) => {
@@ -39,6 +57,27 @@ export const addComment = createAsyncThunk(
         }
     }
 );
+
+export const deleteComments = createAsyncThunk(
+    'comments/deleteComments',
+    async (comments, thunkAPI) => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const userToken = user.token;
+
+            const response = await axios.delete(
+                '/api/Comments/DeleteComments', {
+                data: comments,
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    });
 
 export const deleteComment = createAsyncThunk(
     'comments/deleteComment',
@@ -101,6 +140,18 @@ const commentsSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message;
             })
+            // fetchComments
+            .addCase(fetchComments.pending, (state, action) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchComments.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.comments = action.payload;
+            })
+            .addCase(fetchComments.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
             // addComment
             .addCase(addComment.pending, (state, action) => {
                 state.status = 'loading';
@@ -138,6 +189,18 @@ const commentsSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message;
             })
+            // deleteComments
+            .addCase(deleteComments.pending, (state, action) => {
+                state.status = 'loading';
+            })
+            .addCase(deleteComments.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.comments = state.comments.filter(comment => !action.payload.includes(comment.id));
+            })
+            .addCase(deleteComments.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            });
     }
 });
 
