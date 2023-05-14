@@ -61,12 +61,28 @@ export default function EditProductForm({ onFinishForm, products }) {
         }
     };
 
+    const deleteImage = async (imageId) => {
+        const imageResponse = await fetch(`/api/Images/Delete/${imageId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${userToken}`
+            },
+        });
+
+        if (imageResponse.ok) {
+            message.success('Зображення видалено!');
+        } else {
+            message.error('Помилка видалення зображення!');
+        }
+    }
+
     return (
         <ProductForm
             onFinish={onFinish}
             checkTitle={checkTitle}
             form={form}
             setImageList={setImageList}
+            deleteImage={deleteImage}
         />
     );
 }
