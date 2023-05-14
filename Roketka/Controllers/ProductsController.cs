@@ -40,7 +40,7 @@ namespace Roketka.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("AddProduct")]
-        public async Task<ActionResult<Product>> Post([FromForm]Product product)
+        public async Task<ActionResult<Product>> Post([FromForm] Product product)
         {
             await _productsService.Post(product);
 
@@ -49,11 +49,11 @@ namespace Roketka.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("UpdateProduct")]
-        public async Task<ActionResult<Product>> Put(Product product)
+        public async Task<ActionResult<Product>> Put([FromForm] Product product)
         {
-            await _productsService.Put(product);
+            var updatedProduct = await _productsService.Put(product);
 
-            return Ok(product);
+            return Ok(updatedProduct);
         }
 
         [Authorize(Roles = "Admin")]

@@ -2,17 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { message, Form } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductForm from './ProductForm';
-import { addProduct } from '../../features/products/productsSlice';
+import { updateProduct } from '../../features/products/productsSlice';
 import { getUser } from '../../features/auth/authSlice';
-import { setOldProduct} from '../../features/admin/adminSlice';
 
-export default function AddProductForm({ onFinishForm, products }) {
+export default function EditProductForm({ onFinishForm, products }) {
     const dispatch = useDispatch();
     const userToken = useSelector(state => state.auth.user.token);
     const [form] = Form.useForm();
     const [imageList, setImageList] = useState([]);
-
-    dispatch(setOldProduct(null));
+    const oldProduct = useSelector(state => state.admin.oldProduct);
 
     useEffect(() => {
         dispatch(getUser());
@@ -20,13 +18,14 @@ export default function AddProductForm({ onFinishForm, products }) {
 
     const onFinish = async (values) => {
         const productData = new FormData();
+        productData.append('id', oldProduct.id);
         productData.append('title', values.title);
         productData.append('description', values.description);
         productData.append('price', values.price);
         productData.append('quantity', values.quantity);
         productData.append('sectionId', values.sectionId);
 
-        const productResponse = await dispatch(addProduct(productData));
+        const productResponse = await dispatch(updateProduct(productData));
 
         const formData = new FormData();
         for (let i = 0; i < imageList.length; i++) {
@@ -44,7 +43,7 @@ export default function AddProductForm({ onFinishForm, products }) {
         });
 
         if (imagesResponse.ok) {
-            message.success('Товар додано!');
+            message.success('Товар оновлено!');
             setImageList([]);
             form.resetFields();
             onFinishForm();
@@ -54,7 +53,9 @@ export default function AddProductForm({ onFinishForm, products }) {
     };
 
     const checkTitle = async (rule, value) => {
-        const exists = products.some(product => product.title === value);
+        const exists = products
+            .filter(product => product.id !== oldProduct.id)
+            .some(product => product.title === value);
         if (exists) {
             throw new Error('Така назва вже існує!');
         }

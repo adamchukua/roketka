@@ -2,17 +2,20 @@
 using Microsoft.EntityFrameworkCore;
 using Roketka.Models;
 using System.Linq;
+using Roketka.Services.SectionsService;
 
 namespace Roketka.Services.ProductsService
 {
     public class ProductsService : IProductsService
     {
         private readonly RoketkaContext _context;
+        private readonly ISectionsService _sectionsService;
         private const string IMAGES_PATH = "ClientApp/public/images/";
 
-        public ProductsService(RoketkaContext context)
+        public ProductsService(RoketkaContext context, ISectionsService sectionsService)
         {
             _context = context;
+            _sectionsService = sectionsService;
         }
 
         public async Task<IEnumerable<Product>> Get()
@@ -27,6 +30,7 @@ namespace Roketka.Services.ProductsService
         {
             return await _context.Products
                 .Include(p => p.Images)
+                .Include(p => p.Section)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -47,12 +51,12 @@ namespace Roketka.Services.ProductsService
             oldProduct.Price = product.Price;
             oldProduct.Quantity = product.Quantity;
             oldProduct.SectionId = product.SectionId;
-            //oldProduct.Section = product.Section;
+            oldProduct.Section = await _sectionsService.Get(oldProduct.SectionId);
             oldProduct.UpdatedAt = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
-            return product;
+            return oldProduct;
         }
 
         public async Task<Product> Delete(long id)

@@ -1,65 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from './Layout';
 import { Table, Button, Tabs, Typography, Space, Modal } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts, deleteProducts } from '../../features/products/productsSlice';
 import { fetchComments, deleteComments } from '../../features/comments/commentsSlice';
+import { setOldProduct } from '../../features/admin/adminSlice';
 import PrintData from '../PrintData';
 import AddProductForm from './AddProductForm';
-
-const productColumns = [
-    {
-        title: "id",
-        dataIndex: "id",
-        key: "id",
-        render: (id) => <a target='_blank' href={"/product/" + id}>{id}</a>
-    },
-    {
-        title: "Назва",
-        dataIndex: "title",
-        key: "title",
-    },
-    {
-        title: "Категорія",
-        dataIndex: "section",
-        key: "section",
-        render: (section) => section.title
-    },
-    {
-        title: "Кількість",
-        dataIndex: "quantity",
-        key: "quantity",
-    },
-    {
-        title: "Ціна",
-        dataIndex: "price",
-        key: "price",
-    }
-];
-
-const commentsColumns = [
-    {
-        title: "id",
-        dataIndex: "id",
-        key: "id",
-    },
-    {
-        title: "id користувача",
-        dataIndex: "userId",
-        key: "userId",
-    },
-    {
-        title: "Товар",
-        dataIndex: "product",
-        key: "product",
-        render: (product) => <a target='_blank' href={'/product/' + product.id}>{product.title}</a> 
-    },
-    {
-        title: "Текст",
-        dataIndex: "text",
-        key: "text",
-    }
-];
+import EditProductForm from './EditProductForm';
 
 export default function Admin() {
     const dispatch = useDispatch();
@@ -69,8 +18,9 @@ export default function Admin() {
     const commentsList = comments.comments.map(comment => ({ ...comment, key: comment.id }));
     const [selectedProductIds, setSelectedProductIds] = useState([]);
     const [selectedCommentIds, setSelectedCommentIds] = useState([]);
-
     const [addProductModalVisible, setAddProductModalVisible] = useState(false);
+    const [editProductModalVisible, setEditProductModalVisible] = useState(false);
+    const oldProduct = useSelector(state => state.admin.oldProduct);
     
     useEffect(() => {
         dispatch(fetchProducts());
@@ -120,6 +70,80 @@ export default function Admin() {
     const onFinishAddProductForm = () => {
         setInvisibleAddProductModal();
     };
+
+    const setVisibleEditProductModal = () => {
+        setEditProductModalVisible(true);
+    };
+
+    const setInvisibleEditProductModal = () => {
+        setEditProductModalVisible(false);
+    };
+
+    const onFinishEditProductForm = () => {
+        setInvisibleEditProductModal();
+    };
+
+    const productColumns = [
+        {
+            title: "id",
+            dataIndex: "id",
+            key: "id",
+        },
+        {
+            title: "Назва",
+            dataIndex: "title",
+            key: "title",
+            render: (title, record) => <a target='_blank' href={"/product/" + record.id}>{title}</a>
+        },
+        {
+            title: "Категорія",
+            dataIndex: "section",
+            key: "section",
+            render: (section) => section.title
+        },
+        {
+            title: "Кількість",
+            dataIndex: "quantity",
+            key: "quantity",
+        },
+        {
+            title: "Ціна",
+            dataIndex: "price",
+            key: "price",
+        },
+        {
+            title: "Дії",
+            key: "action",
+            render: (_, record) => <EditOutlined onClick={() => {
+                dispatch(setOldProduct(record));
+                setVisibleEditProductModal();
+            }} />
+        },
+    ];
+
+    const commentsColumns = [
+        {
+            title: "id",
+            dataIndex: "id",
+            key: "id",
+        },
+        {
+            title: "id користувача",
+            dataIndex: "userId",
+            key: "userId",
+        },
+        {
+            title: "Товар",
+            dataIndex: "product",
+            key: "product",
+            render: (product) => <a target='_blank' href={'/product/' + product.id}>{product.title}</a>
+        },
+        {
+            title: "Текст",
+            dataIndex: "text",
+            key: "text",
+        }
+    ];
 
     const tabItems = [
         {
@@ -186,7 +210,22 @@ export default function Admin() {
                 onCancel={setInvisibleAddProductModal}
                 footer={null}
             >
-                <AddProductForm onFinishForm={onFinishAddProductForm} products={productsList} />
+                <AddProductForm
+                    onFinishForm={onFinishAddProductForm}
+                    products={productsList}
+                />
+            </Modal>
+
+            <Modal
+                open={editProductModalVisible}
+                title={`Редагування ${oldProduct && oldProduct.title}`}
+                onCancel={setInvisibleEditProductModal}
+                footer={null}
+            >
+                <EditProductForm
+                    onFinishForm={onFinishEditProductForm}
+                    products={productsList}
+                />
             </Modal>
         </AdminLayout>
     );

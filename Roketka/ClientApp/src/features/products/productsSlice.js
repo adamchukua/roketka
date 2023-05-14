@@ -68,6 +68,30 @@ export const addProduct = createAsyncThunk(
         }
     });
 
+export const updateProduct = createAsyncThunk(
+    'products/updateProduct',
+    async (product, thunkAPI) => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const userToken = user.token;
+
+            const response = await axios.put(
+                '/api/Products/UpdateProduct',
+                product,
+                {
+                    headers: {
+                        Authorization: `Bearer ${userToken}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    });
+
 const productsSlice = createSlice({
     name: 'products',
     initialState,
@@ -133,6 +157,20 @@ const productsSlice = createSlice({
                 state.products.push(action.payload);
             })
             .addCase(addProduct.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+            // updateProduct
+            .addCase(updateProduct.pending, (state, action) => {
+                state.status = 'loading';
+            })
+            .addCase(updateProduct.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                const product = state.products.findIndex((product => product.id === action.payload.id));
+                state.products[product] = action.payload;
+                console.log(action.payload);
+            })
+            .addCase(updateProduct.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
             });
