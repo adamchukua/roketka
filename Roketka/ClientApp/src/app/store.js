@@ -4,6 +4,7 @@ import sectionsSlice from "../features/sections/sectionsSlice";
 import authSlice from "../features/auth/authSlice";
 import commentsSlice from "../features/comments/commentsSlice";
 import adminSlice from "../features/admin/adminSlice";
+import imagesSlice from "../features/images/imagesSlice";
 
 export const store = configureStore({
     reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
         comments: commentsSlice,
         sections: sectionsSlice,
         auth: authSlice,
-        admin: adminSlice
+        admin: adminSlice,
+        images: imagesSlice
     }
 });

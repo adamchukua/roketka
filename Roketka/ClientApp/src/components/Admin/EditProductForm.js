@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ProductForm from './ProductForm';
 import { updateProduct } from '../../features/products/productsSlice';
 import { getUser } from '../../features/auth/authSlice';
+import { setImages } from '../../features/images/imagesSlice';
 
 export default function EditProductForm({ onFinishForm, products }) {
     const dispatch = useDispatch();
@@ -11,7 +12,8 @@ export default function EditProductForm({ onFinishForm, products }) {
     const [form] = Form.useForm();
     const [imageList, setImageList] = useState([]);
     const oldProduct = useSelector(state => state.admin.oldProduct);
-
+    const loadedImages = useSelector(state => state.images.images);
+    
     useEffect(() => {
         dispatch(getUser());
     }, [dispatch]);
@@ -44,6 +46,7 @@ export default function EditProductForm({ onFinishForm, products }) {
 
         if (imagesResponse.ok) {
             message.success('Товар оновлено!');
+            dispatch(setImages(imageList));
             setImageList([]);
             form.resetFields();
             onFinishForm();
@@ -83,6 +86,8 @@ export default function EditProductForm({ onFinishForm, products }) {
             form={form}
             setImageList={setImageList}
             deleteImage={deleteImage}
+            oldProduct={oldProduct}
+            loadedImages={loadedImages}
         />
     );
 }

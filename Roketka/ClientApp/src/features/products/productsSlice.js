@@ -168,7 +168,6 @@ const productsSlice = createSlice({
                 state.status = 'succeeded';
                 const product = state.products.findIndex((product => product.id === action.payload.id));
                 state.products[product] = action.payload;
-                console.log(action.payload);
             })
             .addCase(updateProduct.rejected, (state, action) => {
                 state.status = 'failed';

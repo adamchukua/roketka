@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Roketka.Models;
+using Roketka.Services.ImagesService;
 using static System.Net.Mime.MediaTypeNames;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using Image = Roketka.Models.Image;
@@ -13,73 +14,65 @@ namespace Roketka.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
-        private readonly IHostEnvironment _environment;
-        private readonly RoketkaContext _context;
+        private readonly IImagesService _imagesService;
 
-        public ImagesController(IHostEnvironment environment, RoketkaContext context)
+        public ImagesController(IImagesService imagesService)
         {
-            _environment = environment;
-            _context = context;
+            _imagesService = imagesService;
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<Image>> Get(long id)
         {
-            return Ok(await _context.Images.FirstOrDefaultAsync(i => i.Id == id));
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost("Upload")]
-        public async Task<IActionResult> Upload([FromForm] List<IFormFile> files, [FromForm] int productId)
-        {
-            var images = new List<Image>();
-            var directory = Directory.CreateDirectory("ClientApp/public/images/" + productId);
-
-            foreach (var file in files)
-            {
-                var fileName = Path.GetFileName(file.FileName);
-                var filePath = Path.Combine(directory.FullName, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-
-                var image = new Image
-                {
-                    Path = fileName,
-                    ProductId = productId,
-                };
-                images.Add(image);
-            }
-
-            await _context.Images.AddRangeAsync(images);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete(long id)
-        {
-            var image = await _context.Images
-                .Include(i => i.Product)
-                .FirstOrDefaultAsync(i => i.Id == id);
+            var image = await _imagesService.Get(id);
 
             if (image == null)
             {
                 return NotFound();
             }
 
-            var path = "ClientApp/public/images/" + image.Product.Id + "/" + image.Path;
-            System.IO.File.Delete(path);
+            return Ok(image);
+        }
 
-            _context.Images.Remove(image);
-            await _context.SaveChangesAsync();
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetImagesByProductId/{id}")]
+        public async Task<ActionResult<Image>> GetImagesByProductId(long id)
+        {
+            var images = await _imagesService.GetByProductId(id);
 
-            return Ok();
+            if (images == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(images);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("Upload")]
+        public async Task<ActionResult<IEnumerable<Image>>> Upload
+        (
+            [FromForm] List<IFormFile> files, 
+            [FromForm] int productId)
+        {
+            var images = await _imagesService.Upload(files, productId);
+
+            return Ok(images);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("Delete/{id}")]
+        public async Task<ActionResult<Image>> Delete(long id)
+        {
+            var image = _imagesService.Delete(id);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(image);
         }
     }
 }

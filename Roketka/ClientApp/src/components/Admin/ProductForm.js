@@ -3,13 +3,13 @@ import { Form, Input, Select, Button, List } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSections } from '../../features/sections/sectionsSlice';
+import PrintData from '../PrintData';
 
 const { Option } = Select;
 
-export default function ProductForm({ onFinish, checkTitle, form, setImageList, deleteImage }) {
+export default function ProductForm({ onFinish, checkTitle, form, setImageList, deleteImage, oldProduct, loadedImages }) {
     const dispatch = useDispatch();
     const sections = useSelector(state => state.sections.sections.filter(section => section.subsectionId !== null));
-    const oldProduct = useSelector(state => state.admin.oldProduct);
 
     useEffect(() => {
         dispatch(fetchSections());
@@ -41,6 +41,9 @@ export default function ProductForm({ onFinish, checkTitle, form, setImageList, 
                 sectionId: oldProduct?.sectionId,
             }}
             onFinish={onFinish}
+            onFinishFailed={(errorInfo) => {
+                console.log('Failed:', errorInfo);
+            }}
             validateMessages={validateMessages}
         >
             <Form.Item
@@ -110,18 +113,20 @@ export default function ProductForm({ onFinish, checkTitle, form, setImageList, 
             </Form.Item>
 
             <Form.Item label="Зображення" valuePropName="imageList">
-                <List
-                    itemLayout="horizontal"
-                    dataSource={oldProduct?.images}
-                    renderItem={(image) => (
-                        <List.Item
-                            key={image.id}
-                            actions={[<DeleteOutlined key={image.id} onClick={() => deleteImage(image.id)} />]}
-                        >
-                            <List.Item.Meta title={image.path} action={"ad"} />
-                        </List.Item>
-                    )}
-                />
+                {oldProduct && (
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={loadedImages}
+                        renderItem={(image) => (
+                            <List.Item
+                                key={image.id}
+                                actions={[<DeleteOutlined key={image.id} onClick={() => deleteImage(image.id)} />]}
+                            >
+                                <List.Item.Meta title={image.path} action={"ad"} />
+                            </List.Item>
+                        )}
+                    />
+                )}
 
                 <input type="file" multiple onChange={handleImageChange} />
             </Form.Item>

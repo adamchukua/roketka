@@ -3,48 +3,43 @@ import { message, Form } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductForm from './ProductForm';
 import { addProduct } from '../../features/products/productsSlice';
-import { getUser } from '../../features/auth/authSlice';
-import { setOldProduct} from '../../features/admin/adminSlice';
+import { setOldProduct } from '../../features/admin/adminSlice';
+import { addImages } from '../../features/images/imagesSlice';
 
 export default function AddProductForm({ onFinishForm, products }) {
     const dispatch = useDispatch();
-    const userToken = useSelector(state => state.auth.user.token);
     const [form] = Form.useForm();
     const [imageList, setImageList] = useState([]);
-
-    dispatch(setOldProduct(null));
-
-    useEffect(() => {
-        dispatch(getUser());
-    }, [dispatch]);
+    const productsState = useSelector(state => state.products);
+    const imagesState = useSelector(state => state.images);
 
     const onFinish = async (values) => {
         const productData = new FormData();
+        const imagesData = new FormData();
+
         productData.append('title', values.title);
         productData.append('description', values.description);
         productData.append('price', values.price);
         productData.append('quantity', values.quantity);
         productData.append('sectionId', values.sectionId);
 
-        const productResponse = await dispatch(addProduct(productData));
-
-        const formData = new FormData();
         for (let i = 0; i < imageList.length; i++) {
-            formData.append('files', imageList[i]);
+            imagesData.append('files', imageList[i]);
         }
-        formData.append('productId', productResponse.payload.id);
 
-        const imagesResponse = await fetch('/api/Images/Upload', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${userToken}`
-            },
-        });
+        const productResponse = await dispatch(addProduct(productData));
+        if (productsState.status === 'failed') {
+            message.error('Помилка додавання товару!');
+            return;
+        }
 
-        if (imagesResponse.ok) {
-            message.success('Товар додано!');
+        imagesData.append('productId', productResponse.payload.id);
+       
+        const imagesResponse = await dispatch(addImages(imagesData));
+
+        if (imagesResponse.meta.requestStatus === 'fulfilled' &&
+            productResponse.meta.requestStatus === 'fulfilled') {
+            message.success('Товар та зображення додано!');
             setImageList([]);
             form.resetFields();
             onFinishForm();
@@ -53,11 +48,13 @@ export default function AddProductForm({ onFinishForm, products }) {
         }
     };
 
-    const checkTitle = async (rule, value) => {
+    const checkTitle = (rule, value) => {
         const exists = products.some(product => product.title === value);
         if (exists) {
-            throw new Error('Така назва вже існує!');
+            return Promise.reject('Така назва вже існує!')
         }
+
+        return Promise.resolve();
     };
 
     return (

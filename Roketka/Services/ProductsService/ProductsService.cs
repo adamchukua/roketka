@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Roketka.Models;
 using System.Linq;
+using Roketka.Services.ImagesService;
 using Roketka.Services.SectionsService;
 
 namespace Roketka.Services.ProductsService
@@ -10,12 +11,17 @@ namespace Roketka.Services.ProductsService
     {
         private readonly RoketkaContext _context;
         private readonly ISectionsService _sectionsService;
-        private const string IMAGES_PATH = "ClientApp/public/images/";
+        private readonly IImagesService _imagesService;
 
-        public ProductsService(RoketkaContext context, ISectionsService sectionsService)
+        public ProductsService
+        (
+            RoketkaContext context, 
+            ISectionsService sectionsService, 
+            IImagesService imagesService)
         {
             _context = context;
             _sectionsService = sectionsService;
+            _imagesService = imagesService;
         }
 
         public async Task<IEnumerable<Product>> Get()
@@ -38,6 +44,8 @@ namespace Roketka.Services.ProductsService
         {
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
+
+            product.Section = await _sectionsService.Get(product.SectionId);
 
             return product;
         }
@@ -71,7 +79,7 @@ namespace Roketka.Services.ProductsService
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
-            DeleteFiles(id);
+            _imagesService.DeleteImages(id);
 
             return product;
         }
@@ -92,21 +100,10 @@ namespace Roketka.Services.ProductsService
 
             foreach (var id in productIds)
             {
-                DeleteFiles(id);
+                _imagesService.DeleteImages(id);
             }
 
             return productIds;
-        }
-
-        private void DeleteFiles(long productId)
-        {
-            var path = IMAGES_PATH + productId;
-            var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
-            foreach (string file in files)
-            {
-                File.Delete(file);
-            }
-            Directory.Delete(path);
         }
     }
 }

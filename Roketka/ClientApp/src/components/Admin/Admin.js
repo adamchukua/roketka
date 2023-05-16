@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts, deleteProducts } from '../../features/products/productsSlice';
 import { fetchComments, deleteComments } from '../../features/comments/commentsSlice';
 import { setOldProduct } from '../../features/admin/adminSlice';
+import { fetchImagesByProductId } from '../../features/images/imagesSlice';
 import PrintData from '../PrintData';
 import AddProductForm from './AddProductForm';
 import EditProductForm from './EditProductForm';
@@ -18,15 +19,15 @@ export default function Admin() {
     const commentsList = comments.comments.map(comment => ({ ...comment, key: comment.id }));
     const [selectedProductIds, setSelectedProductIds] = useState([]);
     const [selectedCommentIds, setSelectedCommentIds] = useState([]);
-    const [addProductModalVisible, setAddProductModalVisible] = useState(false);
-    const [editProductModalVisible, setEditProductModalVisible] = useState(false);
+    const [isAddProductModalVisible, setIsAddProductModalVisible] = useState(false);
+    const [isEditProductModalVisible, setIsEditProductModalVisible] = useState(false);
     const oldProduct = useSelector(state => state.admin.oldProduct);
     
     useEffect(() => {
         dispatch(fetchProducts());
         dispatch(fetchComments());
     }, [dispatch]);
-
+    
     const onSelectProductChange = (newSelectedRowKeys) => {
         setSelectedProductIds(newSelectedRowKeys);
     };
@@ -59,28 +60,26 @@ export default function Admin() {
     };
     const hasSelectedComments = selectedCommentIds.length > 0;
 
+    const closeModal = () => {
+        setIsAddProductModalVisible(false);
+        setIsEditProductModalVisible(false);
+    }
+
     const setVisibleAddProductModal = () => {
-        setAddProductModalVisible(true);
-    };
-
-    const setInvisibleAddProductModal = () => {
-        setAddProductModalVisible(false);
-    };
-
-    const onFinishAddProductForm = () => {
-        setInvisibleAddProductModal();
+        setIsAddProductModalVisible(true);
     };
 
     const setVisibleEditProductModal = () => {
-        setEditProductModalVisible(true);
+        setIsEditProductModalVisible(true);
     };
 
-    const setInvisibleEditProductModal = () => {
-        setEditProductModalVisible(false);
+    const onFinishAddProductForm = () => {
+        closeModal();
     };
 
     const onFinishEditProductForm = () => {
-        setInvisibleEditProductModal();
+        dispatch(setOldProduct(null));
+        closeModal();
     };
 
     const productColumns = [
@@ -116,6 +115,7 @@ export default function Admin() {
             key: "action",
             render: (_, record) => <EditOutlined onClick={() => {
                 dispatch(setOldProduct(record));
+                dispatch(fetchImagesByProductId(record.id));
                 setVisibleEditProductModal();
             }} />
         },
@@ -205,9 +205,9 @@ export default function Admin() {
             <Tabs defaultActiveKey="1" items={tabItems} />
 
             <Modal
-                open={addProductModalVisible}
+                open={isAddProductModalVisible}
                 title="Додавання нового товару"
-                onCancel={setInvisibleAddProductModal}
+                onCancel={closeModal}
                 footer={null}
             >
                 <AddProductForm
@@ -217,9 +217,9 @@ export default function Admin() {
             </Modal>
 
             <Modal
-                open={editProductModalVisible}
-                title={`Редагування ${oldProduct && oldProduct.title}`}
-                onCancel={setInvisibleEditProductModal}
+                open={isEditProductModalVisible}
+                title="Редагування товару"
+                onCancel={closeModal}
                 footer={null}
             >
                 <EditProductForm

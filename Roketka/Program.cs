@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using Roketka.Models;
 using Roketka.Services.Auth;
 using Roketka.Services.CommentsService;
+using Roketka.Services.ImagesService;
 using Roketka.Services.PasswordHasher;
 using Roketka.Services.ProductsService;
 using Roketka.Services.SectionsService;
@@ -47,6 +48,7 @@ builder.Services.AddTransient<ICommentsService, CommentsService>();
 builder.Services.AddTransient<IAuth, Auth>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
 builder.Services.AddTransient<ISectionsService, SectionService>();
+builder.Services.AddTransient<IImagesService, ImagesService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
