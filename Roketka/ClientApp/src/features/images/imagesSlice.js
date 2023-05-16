@@ -25,17 +25,15 @@ export const fetchImagesByProductId = createAsyncThunk(
 
 export const deleteImage = createAsyncThunk(
     'images/deleteImage',
-    async (image, thunkAPI) => {
+    async (imageId, thunkAPI) => {
         try {
             const user = JSON.parse(localStorage.getItem('user'));
             const userToken = user.token;
 
             const response = await axios.delete(
-                '/api/Images/DeleteImage', {
-                data: image,
+                `/api/Images/Delete/${imageId}`, {
                 headers: {
                     Authorization: `Bearer ${userToken}`,
-                    Accept: 'application/json',
                 },
             });
 

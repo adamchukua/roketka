@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { message, Form } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductForm from './ProductForm';
 import { addProduct } from '../../features/products/productsSlice';
-import { setOldProduct } from '../../features/admin/adminSlice';
 import { addImages } from '../../features/images/imagesSlice';
 
 export default function AddProductForm({ onFinishForm, products }) {
@@ -11,7 +10,6 @@ export default function AddProductForm({ onFinishForm, products }) {
     const [form] = Form.useForm();
     const [imageList, setImageList] = useState([]);
     const productsState = useSelector(state => state.products);
-    const imagesState = useSelector(state => state.images);
 
     const onFinish = async (values) => {
         const productData = new FormData();

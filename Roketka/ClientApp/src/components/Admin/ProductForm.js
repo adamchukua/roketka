@@ -120,7 +120,11 @@ export default function ProductForm({ onFinish, checkTitle, form, setImageList, 
                         renderItem={(image) => (
                             <List.Item
                                 key={image.id}
-                                actions={[<DeleteOutlined key={image.id} onClick={() => deleteImage(image.id)} />]}
+                                actions={[
+                                    <DeleteOutlined
+                                        key={image.id}
+                                        onClick={() => deleteImage(image.id)} />
+                                ]}
                             >
                                 <List.Item.Meta title={image.path} action={"ad"} />
                             </List.Item>

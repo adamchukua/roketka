@@ -65,7 +65,7 @@ namespace Roketka.Controllers
         [HttpDelete("Delete/{id}")]
         public async Task<ActionResult<Image>> Delete(long id)
         {
-            var image = _imagesService.Delete(id);
+            var image = await _imagesService.Delete(id);
 
             if (image == null)
             {

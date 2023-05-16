@@ -1,25 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { message, Form } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductForm from './ProductForm';
 import { updateProduct } from '../../features/products/productsSlice';
-import { getUser } from '../../features/auth/authSlice';
-import { setImages } from '../../features/images/imagesSlice';
+import { deleteImage as deleteImageRequest, addImages } from '../../features/images/imagesSlice';
 
 export default function EditProductForm({ onFinishForm, products }) {
     const dispatch = useDispatch();
-    const userToken = useSelector(state => state.auth.user.token);
     const [form] = Form.useForm();
     const [imageList, setImageList] = useState([]);
     const oldProduct = useSelector(state => state.admin.oldProduct);
     const loadedImages = useSelector(state => state.images.images);
-    
-    useEffect(() => {
-        dispatch(getUser());
-    }, [dispatch]);
 
     const onFinish = async (values) => {
         const productData = new FormData();
+        const imagesData = new FormData();
+
         productData.append('id', oldProduct.id);
         productData.append('title', values.title);
         productData.append('description', values.description);
@@ -29,24 +25,15 @@ export default function EditProductForm({ onFinishForm, products }) {
 
         const productResponse = await dispatch(updateProduct(productData));
 
-        const formData = new FormData();
         for (let i = 0; i < imageList.length; i++) {
-            formData.append('files', imageList[i]);
+            imagesData.append('files', imageList[i]);
         }
-        formData.append('productId', productResponse.payload.id);
+        imagesData.append('productId', productResponse.payload.id);
 
-        const imagesResponse = await fetch('/api/Images/Upload', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${userToken}`
-            },
-        });
+        const imagesResponse = await dispatch(addImages(imagesData));
 
-        if (imagesResponse.ok) {
+        if (imagesResponse.meta.requestStatus === 'fulfilled') {
             message.success('Товар оновлено!');
-            dispatch(setImages(imageList));
             setImageList([]);
             form.resetFields();
             onFinishForm();
@@ -65,19 +52,14 @@ export default function EditProductForm({ onFinishForm, products }) {
     };
 
     const deleteImage = async (imageId) => {
-        const imageResponse = await fetch(`/api/Images/Delete/${imageId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${userToken}`
-            },
-        });
+        const deleteImageResponse = await dispatch(deleteImageRequest(imageId));
 
-        if (imageResponse.ok) {
+        if (deleteImageResponse.meta.requestStatus === 'fulfilled') {
             message.success('Зображення видалено!');
         } else {
             message.error('Помилка видалення зображення!');
         }
-    }
+    };
 
     return (
         <ProductForm
