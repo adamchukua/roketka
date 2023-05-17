@@ -34,28 +34,38 @@ namespace Roketka.Services.ImagesService
             var images = new List<Image>();
             var directory = Directory.CreateDirectory(GetPath() + productId);
 
-            foreach (var file in files)
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                var fileName = Path.GetFileName(file.FileName);
-                var filePath = Path.Combine(directory.FullName, fileName);
-
-                await using (var stream = new FileStream(filePath, FileMode.Create))
+                foreach (var file in files)
                 {
-                    await file.CopyToAsync(stream);
+                    var fileName = Path.GetFileName(file.FileName);
+                    var filePath = Path.Combine(directory.FullName, fileName);
+
+                    await using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    var image = new Image
+                    {
+                        Path = fileName,
+                        ProductId = productId,
+                    };
+                    images.Add(image);
                 }
 
-                var image = new Image
-                {
-                    Path = fileName,
-                    ProductId = productId,
-                };
-                images.Add(image);
+                await _context.Images.AddRangeAsync(images);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+                return images;
             }
-
-            await _context.Images.AddRangeAsync(images);
-            await _context.SaveChangesAsync();
-
-            return images;
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<Image> Delete(long id)
