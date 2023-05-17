@@ -4,6 +4,10 @@ using Roketka.Models;
 using System.Linq;
 using Roketka.Services.ImagesService;
 using Roketka.Services.SectionsService;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
+using System;
+using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace Roketka.Services.ProductsService
 {
@@ -38,6 +42,22 @@ namespace Roketka.Services.ProductsService
                 .Include(p => p.Images)
                 .Include(p => p.Section)
                 .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<IEnumerable<int>> Search(string keyword)
+        {
+            var foundCountParameter = new SqlParameter("@FoundCount", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            };
+
+            var parameters = new[] { new SqlParameter("@Keyword", keyword), foundCountParameter };
+
+            var productIds = await _context.Set<ProductSearch>()
+                .FromSqlRaw("EXEC dbo.SearchProductsByKeyword @Keyword, @FoundCount OUTPUT", parameters)
+                .ToListAsync();
+
+            return productIds.Select(p => p.ID).ToArray();
         }
 
         public async Task<Product> Post(Product product)

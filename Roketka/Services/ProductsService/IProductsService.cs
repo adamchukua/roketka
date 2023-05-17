@@ -6,6 +6,7 @@ namespace Roketka.Services.ProductsService
     {
         Task<IEnumerable<Product>> Get();
         Task<Product> Get(long id);
+        Task<IEnumerable<int>> Search(string request);
         Task<Product> Post(Product product);
         Task<Product> Put(Product product);
         Task<Product> Delete(long id);

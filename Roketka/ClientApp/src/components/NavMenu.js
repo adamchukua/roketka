@@ -1,5 +1,5 @@
 ﻿import React, { useEffect } from 'react';
-import { Row, Col, Layout, Space, Button, Avatar } from 'antd';
+import { Row, Col, Layout, Space, Button, Avatar, Input } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoginModalVisible, setRegisterModalVisible, exit, getUser } from '../features/auth/authSlice';
 import AdminLayout from './Admin/Layout';
@@ -16,13 +16,17 @@ export default function NavMenu() {
         }
     };
 
+    const onSearch = (value) => {
+        console.log(value)
+    };
+
     useEffect(() => {
         dispatch(getUser());
     }, [dispatch]);
 
     return (
         <Layout.Header>
-            <Row style={{ width: '100%' }} justify={'space-between'}>
+            <Row style={{ width: '100%' }} justify={'space-between'} align={'middle'}>
                 <Col>
                     <div className="logo">Roketka</div>
                 </Col>
@@ -39,6 +43,13 @@ export default function NavMenu() {
                             <a href="/admin" className="link-white">Адмін-панель</a>
                         </AdminLayout>
                     </Space>
+                </Col>
+
+                <Col>
+                    <Input.Search
+                        placeholder="шукайте тут..."
+                        onSearch={onSearch}
+                        style={{ width: 200 }} />
                 </Col>
 
                 <Col>

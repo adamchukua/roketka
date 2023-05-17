@@ -38,6 +38,19 @@ namespace Roketka.Controllers
             return Ok(product);
         }
 
+        [HttpGet("SearchProducts/{keyword}")]
+        public async Task<ActionResult<IEnumerable<int>>> Search(string keyword)
+        {
+            var products = await _productsService.Search(keyword);
+
+            if (products == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(products);
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpPost("AddProduct")]
         public async Task<ActionResult<Product>> Post([FromForm] Product product)
