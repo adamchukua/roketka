@@ -39,7 +39,7 @@ namespace Roketka.Controllers
         }
 
         [HttpGet("SearchProducts/{keyword}")]
-        public async Task<ActionResult<IEnumerable<int>>> Search(string keyword)
+        public async Task<ActionResult<IEnumerable<Product>>> Search(string keyword)
         {
             var products = await _productsService.Search(keyword);
 

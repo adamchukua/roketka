@@ -44,20 +44,23 @@ namespace Roketka.Services.ProductsService
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<IEnumerable<int>> Search(string keyword)
+        public async Task<IEnumerable<Product>> Search(string keyword)
         {
             var foundCountParameter = new SqlParameter("@FoundCount", SqlDbType.Int)
             {
                 Direction = ParameterDirection.Output
             };
 
-            var parameters = new[] { new SqlParameter("@Keyword", keyword), foundCountParameter };
+            var parameters = new[]
+            {
+                new SqlParameter("@Keyword", keyword), foundCountParameter
+            };
 
-            var productIds = await _context.Set<ProductSearch>()
+            var products = await _context.Products
                 .FromSqlRaw("EXEC dbo.SearchProductsByKeyword @Keyword, @FoundCount OUTPUT", parameters)
                 .ToListAsync();
 
-            return productIds.Select(p => p.ID).ToArray();
+            return products;
         }
 
         public async Task<Product> Post(Product product)
