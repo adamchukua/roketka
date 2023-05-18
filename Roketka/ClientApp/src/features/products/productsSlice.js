@@ -13,7 +13,15 @@ export const fetchProducts = createAsyncThunk(
     return axios
         .get('/api/Products/GetProducts')
         .then((response) => response.data);
-});
+    });
+
+export const searchProducts = createAsyncThunk(
+    'products/searchProducts',
+    async (keyword) => {
+        return axios
+            .get(`/api/Products/SearchProducts/${keyword}`)
+            .then((response) => response.data);
+    });
 
 export const fetchProductById = createAsyncThunk(
     'products/fetchProductById',
@@ -121,6 +129,20 @@ const productsSlice = createSlice({
                 localStorage.setItem('products', JSON.stringify(state.products));
             })
             .addCase(fetchProducts.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+            // searchProducts
+            .addCase(searchProducts.pending, (state, action) => {
+                state.status = 'loading';
+            })
+            .addCase(searchProducts.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.products = action.payload;
+
+                localStorage.setItem('products', JSON.stringify(state.products));
+            })
+            .addCase(searchProducts.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
             })

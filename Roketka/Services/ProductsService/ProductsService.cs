@@ -60,6 +60,12 @@ namespace Roketka.Services.ProductsService
                 .FromSqlRaw("EXEC dbo.SearchProductsByKeyword @Keyword, @FoundCount OUTPUT", parameters)
                 .ToListAsync();
 
+            foreach (var product in products)
+            {
+                product.Images = (ICollection<Image>)await _imagesService.GetByProductId(product.Id);
+                product.Section = await _sectionsService.Get(product.SectionId);
+            }
+
             return products;
         }
 

@@ -2,6 +2,7 @@
 import { Row, Col, Layout, Space, Button, Avatar, Input } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoginModalVisible, setRegisterModalVisible, exit, getUser } from '../features/auth/authSlice';
+import { searchProducts } from '../features/products/productsSlice';
 import AdminLayout from './Admin/Layout';
 
 export default function NavMenu() {
@@ -17,7 +18,9 @@ export default function NavMenu() {
     };
 
     const onSearch = (value) => {
-        console.log(value)
+        if (value) {
+            dispatch(searchProducts(value));
+        }
     };
 
     useEffect(() => {
@@ -45,7 +48,7 @@ export default function NavMenu() {
                     </Space>
                 </Col>
 
-                <Col>
+                <Col style={{ display: 'flex' }}>
                     <Input.Search
                         placeholder="шукайте тут..."
                         onSearch={onSearch}
