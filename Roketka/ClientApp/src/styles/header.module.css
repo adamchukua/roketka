@@ -1,0 +1,17 @@
+header {
+    background: url("/public/images/blob.svg") no-repeat right / 35%;
+    height: 400px;
+}
+
+.headerContent {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.headerTitle {
+    font-size: 5.2rem;
+    margin-bottom: 20px;
+}

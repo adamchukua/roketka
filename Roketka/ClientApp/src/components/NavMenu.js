@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoginModalVisible, setRegisterModalVisible, exit, getUser } from '../features/auth/authSlice';
 import { searchProducts } from '../features/products/productsSlice';
 import AdminLayout from './Admin/Layout';
+import NavMenuStyles from '../styles/NavMenu.module.css';
+import GeneralStyles from '../styles/general.module.css';
 
 export default function NavMenu() {
     const dispatch = useDispatch();
@@ -31,19 +33,19 @@ export default function NavMenu() {
         <Layout.Header>
             <Row style={{ width: '100%' }} justify={'space-between'} align={'middle'}>
                 <Col>
-                    <div className="logo">Roketka</div>
+                    <div className={NavMenuStyles.logo}>Roketka</div>
                 </Col>
 
                 <Col>
                     <Space>
-                        <a href="/" className="link-white">Головна</a>
+                        <a href="/" className={GeneralStyles.linkWhite} >Головна</a>
 
-                        <a href="/catalog" className="link-white">Каталог</a>
+                        <a href="/catalog" className={GeneralStyles.linkWhite}>Каталог</a>
 
-                        <a href="/about" className="link-white">Про нас</a>
+                        <a href="/about" className={GeneralStyles.linkWhite}>Про нас</a>
 
                         <AdminLayout>
-                            <a href="/admin" className="link-white">Адмін-панель</a>
+                            <a href="/admin" className={GeneralStyles.linkWhite}>Адмін-панель</a>
                         </AdminLayout>
                     </Space>
                 </Col>

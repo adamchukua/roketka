@@ -1,0 +1,17 @@
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+.content {
+    padding: 30px 50px;
+    background: #fff;
+}
+
+.linkWhite {
+    color: #fff;
+}
