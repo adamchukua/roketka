@@ -67,12 +67,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-//builder.Services.AddAuthorization(options =>
-//{
-//    options.AddPolicy("UpdateDeleteComment", policy =>
-//        policy.Requirements.Add(new SameCommentAuthorRequirement()));
-//});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

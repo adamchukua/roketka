@@ -54,6 +54,7 @@ export default function RegisterModal() {
             <Modal
                 open={isVisible}
                 title="Реєстрація"
+                width={600}
                 onCancel={() => dispatch(setRegisterModalInvisible())}
                 footer={null}
             >

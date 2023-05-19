@@ -77,7 +77,9 @@ export default function ProductsList(props) {
                                             cover={
                                                 (product.images.length > 0) && (<img
                                                     alt={product.title}
-                                                    src={"images/" + product.id + "/" + product.images[0].path} />)
+                                                    src={"images/" + product.id + "/" + product.images[0].path}
+                                                    style={{ objectFit: 'contain', height: 200 }}
+                                                />)
                                             }
                                         >
                                             <Card.Meta title={product.title} description={product.price + currencyName} />

@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { Typography, Row, Col, Button, Carousel } from 'antd';
 import Comments from './Comments';
 import PrintData from './PrintData';
+import CarouselDotsStyles from '../styles/CarouselDotsStyles.module.css';
 
 export default function Product() {
     const id = useParams()["id"];
@@ -25,21 +26,24 @@ export default function Product() {
                     <Typography.Title>{product.title}</Typography.Title>
 
                     <Row gutter={[16]}>
-                        <Col span={16}>
-                            <Carousel>
+                        <Col span={14}>
+                            <Carousel
+                                dots={{ className: CarouselDotsStyles['carousel-dots'] }}
+                                draggable
+                            >
                                 {product.images.map(item => (
                                     <div key={item.id}>
                                         <img
                                             src={"images/" + product.id + "/" + item.path}
                                             alt={product.title}
-                                            style={{ width: '100%', height: 400 }}
+                                            style={{ width: '100%', height: 400, objectFit: 'contain' }}
                                         />
                                     </div>
                                 ))}
                             </Carousel>
                         </Col>
 
-                        <Col span={8}>
+                        <Col span={10}>
                             <p>{product.description}</p>
 
                             <Typography.Title level={3}>{product.price} грн</Typography.Title>
